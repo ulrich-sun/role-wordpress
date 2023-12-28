@@ -1,0 +1,9 @@
+---
+- block:
+    - name: Installation des thèmes
+      command: /usr/local/bin/wp theme install "{{ item }}" --activate --allow-root --ssh=docker:wordpress
+      loop: "{{ themes_to_install }}"
+      when: themes_to_install is defined and themes_to_install | length > 0
+  tags:
+    - install_themes
+

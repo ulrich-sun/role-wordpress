@@ -1,0 +1,7 @@
+---
+- hosts:
+    client:
+      ansible_host: 192.168.99.11
+  remote_user: vagrant
+  roles:
+    - roles

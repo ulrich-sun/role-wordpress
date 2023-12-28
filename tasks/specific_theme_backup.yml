@@ -1,0 +1,32 @@
+- block:
+    - name: Set variables
+      set_fact:
+        container_name: "wordpress"
+        wp_dir: "eazytraining/wp-content/themes"  # Modifier le chemin vers les thèmes
+        site_name: "EAZYTraining"
+        timestamp: "{{ ansible_date_time.iso8601 | regex_replace('[-T:.]', '') | regex_replace('([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{6})', '\\1-\\2-\\3-\\4') }}"
+        unique_id: "{{ lookup('password', '/dev/null length=10 chars=ascii_letters,digits') }}"
+
+    - name: Get plugin version from the theme file
+      command: sh -c "grep 'Version:' {{ wp_dir }}/{{ theme_to_update.theme_name }}/style.css | cut -d ' ' -f 2"
+      register: theme_version_result
+      changed_when: False
+
+    - name: Set file name
+      set_fact:
+        backup_file_name: "backup_{{ timestamp }}_{{ site_name }}_{{ unique_id }}_{{ theme_to_update.theme_name }}_{{ theme_version_result.stdout }}.zip"
+
+    - name: Backup the specific theme in the container
+      command: sh -c "cd {{ wp_dir }} && sudo zip -r {{ theme_to_update.theme_name }}/{{ backup_file_name }} {{ theme_to_update.theme_name }}"
+
+    - name: Copy backup file from container to host
+      command: sh -c "sudo cp {{ wp_dir }}/{{ theme_to_update.theme_name }}/{{ backup_file_name }} {{ compose_project_dir }}/specific_backup_themes"
+      notify:
+        - s3_specific_themes_backup_handler
+
+    - name: Remove backup file from the WordPress container
+      command: sh -c "sudo rm -f {{ wp_dir }}/{{ theme_to_update.theme_name }}/{{ backup_file_name }}"
+
+  tags:
+    - theme_specific_backup
+

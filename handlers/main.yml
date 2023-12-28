@@ -1,0 +1,53 @@
+---
+# Inclusion du contenu du fichier backup_plugin_handler.yml
+- name: backup_plugin_handler
+  include_tasks: tasks/specific_plugin_backup.yml
+
+# Inclusion du contenu du fichier backup_theme_handler.yml
+- name: backup_theme_handler
+  include_tasks: tasks/specific_theme_backup.yml
+
+# Change permissions for plugins directory to R+W+X for owner and group, R+X for others
+- name: activate_plugin_update
+  file:
+    path: eazytraining/wp-content/plugins/
+    mode: "0775"
+
+# Change permissions for plugins directory to R+W+X for owner, R+X for group and others
+- name: deactivate_plugin_update
+  file:
+    path: eazytraining/wp-content/plugins/
+    mode: "0755"
+
+#Change permissions for plugins/malcare-security directory for R+W+X for owner and group, R+X for others
+- name: activate_plugin_malcare-security_update
+  file:
+    path: eazytraining/wp-content/plugins/malcare-security
+    mode: "0777" 
+
+# Inclusion du contenu du fichier s3_global_db_backup.yml
+- name: s3_global_db_backup_handler
+  include_tasks: tasks/s3_global_db_backup.yml
+
+# Inclusion du contenu du fichier s3_global_plugins_backup.yml
+- name: s3_global_plugins_backup_handler
+  include_tasks: tasks/s3_global_plugins_backup.yml
+
+
+# Inclusion du contenu du fichier s3_global_themes_backup.yml
+- name: s3_global_themes_backup_handler
+  include_tasks: tasks/s3_global_themes_backup.yml
+
+# Inclusion du contenu du fichier s3_specific_plugins_backup.yml
+- name: s3_specific_plugins_backup_handler
+  include_tasks: tasks/s3_specific_plugins_backup.yml
+
+# Inclusion du contenu du fichier s3_specific_themes_backup.yml
+- name: s3_specific_themes_backup_handler
+  include_tasks: tasks/s3_specific_themes_backup.yml
+
+# Inclusion du contenu du fichier s3_backup_site.yml
+- name: s3_backup_site_handler
+  include_tasks: tasks/s3_backup_site.yml
+
+

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Mise à jour
+apt-get update
+
+# Installer WP-CLI
+curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+chmod +x wp-cli.phar
+mv wp-cli.phar /usr/local/bin/wp
+
+# Installer WordPress
+/usr/local/bin/wp core install --url={{ wordpress_site_url }} --title={{ wordpress_title }} --admin_user={{ wordpress_admin_user }} --admin_password={{ wordpress_admin_password }} --admin_email={{ wordpress_admin_email }} --allow-root
+
+# Exécuter la commande CMD ou ENTRYPOINT d'origine
+exec "$@"
+

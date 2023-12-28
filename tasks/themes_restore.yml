@@ -1,0 +1,24 @@
+---
+- block:
+    - name: Inclure les variables depuis vars.yaml
+      include_vars:
+        file: vars/restore_themes_name.yml
+
+    - name: Trouver le fichier de sauvegarde des thèmes sur l'hôte
+      ansible.builtin.find:
+        paths: "{{ restore_files_path }}"
+        patterns: "{{ restore_pattern }}"
+      register: restore_files
+
+    - name: Extraire le fichier ZIP 
+      command: sudo unzip -o {{ restore_files_path }}/{{ restore_pattern }} -d unzip_folder/
+
+    - name: Copier les fichiers extraits depuis unzip_folder au reperoire eazytraining
+      command: sudo rsync -a --delete unzip_folder/ eazytraining/wp-content/themes/
+
+    - name: Remove backup file from the WordPress 
+      command: sh -c "sudo rm -rf unzip_folder/*"
+
+  tags:
+    - themes_restore
+

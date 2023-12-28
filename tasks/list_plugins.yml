@@ -1,0 +1,26 @@
+- block:
+    - name: Obtenir la liste des plugins installés
+      command: /usr/local/bin/wp plugin list --format=json --allow-root --ssh=docker:wordpress
+      register: plugins_list_output
+
+    - name: Charger le contenu actuel du fichier
+      shell: cat "{{ compose_project_dir }}/plugins_list.json"
+      register: current_content
+      failed_when: false
+      changed_when: false
+      check_mode: no
+
+    - name: Concaténer le nouveau contenu avec l'ancien
+      copy:
+        content: |
+          {{ current_content.stdout | default('') }}
+          
+          {{ plugins_list_output.stdout | default('') }}
+        dest: "{{ compose_project_dir }}/list_plugins/plugins_list.json"
+      notify:
+        - s3_list_plugins_handler
+
+  tags:
+    - plugins_list
+
+

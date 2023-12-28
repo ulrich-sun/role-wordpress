@@ -1,0 +1,14 @@
+---
+- block:
+    - name: Copier le fichier de sauvegarde vers le conteneur
+      command: docker cp {{ restore_db_name.restore_files_path }}/{{ restore_db_name.restore_pattern }} db:{{ restore_db_name.restore_pattern }}
+
+    - name: Restaurer le fichier SQL dans la base de données MySQL
+      command: docker exec db sh -c "MYSQL_PWD='{{ db_root_psw }}' mysqldump -u root {{ wp_db_name }} < {{ restore_db_name.restore_pattern }}"
+
+    - name: Remove file from wordpress container
+      command: docker exec db rm {{ restore_db_name.restore_pattern }}
+
+  tags:
+    - global_restore_db
+

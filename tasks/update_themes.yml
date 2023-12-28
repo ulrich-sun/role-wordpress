@@ -1,0 +1,61 @@
+---
+- block:
+    - name: Lire les informations du fichier de configuration
+      include_vars:
+        file: "vars/theme_to_update.yml"
+
+    - name: Récupérer les thèmes installés avant la mise à jour
+      command: /usr/local/bin/wp theme list --format=json --allow-root --ssh=docker:wordpress
+      register: installed_themes_before_update
+      notify: backup_theme_handler
+
+    - name: Mettre à jour le thème
+      command: /usr/local/bin/wp theme update "{{ theme_to_update.theme_name }}" --version="{{ new_version }}" --allow-root --ssh=docker:wordpress
+      register: theme_update_output
+
+    - name: Récupérer les thèmes installés après la mise à jour
+      command: /usr/local/bin/wp theme list --format=json --allow-root --ssh=docker:wordpress
+      register: installed_themes_after_update
+
+    - name: Afficher le contenu des thèmes après la mise à jour
+      debug:
+        var: installed_themes_after_update.stdout | from_json
+
+    - name: Comparer les versions des thèmes avant et après la mise à jour
+      set_fact:
+        updated_themes: []
+      when:
+        - installed_themes_before_update is defined
+        - installed_themes_after_update is defined
+
+    - name: Initialiser la variable updated_theme_details
+      set_fact:
+        updated_theme_details: []
+    - name: Collecter les détails du thème mis à jour avant et après la mise à jour
+      set_fact:
+        updated_theme_details: "{{ updated_theme_details | default([]) + [{'theme_name': item.name, 'before_update': theme_before_update, 'after_update': theme_after_update, 'update_date': ansible_date_time.iso8601}] }}"
+      vars:
+        theme_before_update: "{{ installed_themes_before_update.stdout | from_json | selectattr('name', 'equalto', item.name) | list | first }}"
+        theme_after_update: "{{ installed_themes_after_update.stdout | from_json | selectattr('name', 'equalto', item.name) | list | first }}"
+      loop: "{{ installed_themes_after_update.stdout | from_json }}"
+      loop_control:
+        loop_var: item
+      when:
+        - item.name in installed_themes_before_update.stdout | from_json | map(attribute='name')
+        - item.version != (installed_themes_before_update.stdout | from_json | selectattr('name', 'equalto', item.name) | map(attribute='version') | first)
+    - name: Créer le fichier s'il n'existe pas
+      file:
+        path: "{{ compose_project_dir }}/specific_backup_themes/{{ theme_to_update.theme_name }}.yaml"
+        state: touch
+      when: updated_theme_details | length > 0
+
+    - name: Ajouter les détails des thèmes mis à jour au fichier existant
+      lineinfile:
+        path: "{{ compose_project_dir }}/specific_backup_themes/{{ theme_to_update.theme_name }}.yaml"
+        line: "{{ updated_theme_details | to_yaml | indent(width=2) }}"
+        insertafter: EOF
+      when: updated_theme_details | length > 0
+
+  tags:
+    - update_theme
+

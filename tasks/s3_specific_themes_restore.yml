@@ -1,0 +1,21 @@
+---
+- block:
+    - name: Install botocore and boto3
+      pip:
+          name: botocore,boto3
+          executable: /usr/local/bin/pip3.8
+    - name: Synchroniser le répertoire local avec S3
+      vars:
+          ansible_python_interpreter: /usr/local/bin/python3.8
+      aws_s3:
+          bucket: "{{ s3_bucket_name }}"
+          object: "{{ s3_remote_directory_specific_themes }}/{{ s3_filename_specific_themes }}"
+          dest: "{{ compose_project_dir }}/s3_specific_theme_restore/{{ s3_filename_specific_themes }}"
+          mode: get
+          secret_key: "{{ aws_secret_key }}"
+          access_key: "{{ aws_access_key}}"
+          region: "{{ region }}"
+          
+  tags:
+    - restore_specific_themes_s3
+
