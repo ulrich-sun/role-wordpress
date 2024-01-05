@@ -1,9 +1,5 @@
 ---
 - block:
-    - name: Lire les informations du fichier de configuration
-      include_vars:
-        file: "vars/theme_to_update.yml"
-
     - name: Récupérer les thèmes installés avant la mise à jour
       command: /usr/local/bin/wp theme list --format=json --allow-root --ssh=docker:wordpress
       register: installed_themes_before_update
