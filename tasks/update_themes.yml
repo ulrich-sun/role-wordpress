@@ -6,7 +6,7 @@
       notify: backup_theme_handler
 
     - name: Mettre à jour le thème
-      command: /usr/local/bin/wp theme update "{{ theme_to_update.theme_name }}" --version="{{ new_version }}" --allow-root --ssh=docker:wordpress
+      command: /usr/local/bin/wp theme update "{{ theme_to_update.theme_name }}" --version="{{ theme_to_update.new_version }}" --allow-root --ssh=docker:wordpress
       register: theme_update_output
 
     - name: Récupérer les thèmes installés après la mise à jour
