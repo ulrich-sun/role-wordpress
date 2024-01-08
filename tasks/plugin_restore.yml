@@ -1,11 +1,5 @@
 ---
 - block:
-    - name: Trouver le fichier de sauvegarde sur l'hôte
-      ansible.builtin.find:
-        paths: "{{ restore_files_path }}"
-        patterns: "{{ restore_pattern }}"
-      register: restore_files
-
     - name: Extraire le fichier ZIP 
       command: unzip -o "{{ restore_plugins_name.restore_files_path }}/{{ restore_plugins_name.restore_pattern }}" -d "unzip_folder/"
 
