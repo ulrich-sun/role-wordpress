@@ -1,13 +1,7 @@
 ---
 - block:
-    - name: Trouver le fichier de sauvegarde des thèmes sur l'hôte
-      ansible.builtin.find:
-        paths: "{{ restore_files_path }}"
-        patterns: "{{ restore_pattern }}"
-      register: restore_files
-
     - name: Extraire le fichier ZIP 
-      command: sudo unzip -o {{ restore_files_path }}/{{ restore_pattern }} -d unzip_folder/
+      command: sudo unzip -o {{ restore_themes_name.restore_files_path }}/{{ restore_themes_name.restore_pattern }} -d unzip_folder/
 
     - name: Copier les fichiers extraits depuis unzip_folder au reperoire eazytraining
       command: sudo rsync -a --delete unzip_folder/ eazytraining/wp-content/themes/
