@@ -1,9 +1,5 @@
 ---
 - block:
-    - name: Inclure les variables depuis vars.yaml
-      include_vars:
-        file: vars/restore_themes_name.yml
-
     - name: Trouver le fichier de sauvegarde des thèmes sur l'hôte
       ansible.builtin.find:
         paths: "{{ restore_files_path }}"
