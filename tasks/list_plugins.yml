@@ -17,8 +17,6 @@
           
           {{ plugins_list_output.stdout | default('') }}
         dest: "{{ compose_project_dir }}/list_plugins/plugins_list.json"
-      notify:
-        - s3_list_plugins_handler
 
   tags:
     - plugins_list
