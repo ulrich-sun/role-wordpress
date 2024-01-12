@@ -15,6 +15,15 @@
           secret_key: "{{ aws_secret_key }}"
           access_key: "{{ aws_access_key}}"
           region: "{{ region }}"
+
+    - name: Extraire le fichier ZIP du plugin
+      command: sh -c "sudo unzip -o {{ s3_specific_theme_name_restore.restore_files_path }}/{{ s3_specific_theme_name_restore.restore_pattern }} -d unzip_folder"
+
+    - name: Copier les fichiers extraits depuis unzip_folder au reperoire eazytraining
+      command: sh -c "sudo rsync -a unzip_folder/ eazytraining/wp-content/themes/"
+
+    - name: Remove backup file from the WordPress
+      command: sh -c "sudo rm -rf unzip_folder/*"
           
   tags:
     - restore_specific_themes_s3
