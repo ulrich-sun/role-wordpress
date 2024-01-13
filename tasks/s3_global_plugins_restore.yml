@@ -1,13 +1,14 @@
 ---
 - block:
-    - name: Install botocore and boto3
+    - name: Installer les paquets Python
       pip:
-          name: botocore,boto3
-          executable: /usr/local/bin/pip3.8
+        name:
+          - "botocore"
+          - "boto3"
+        executable: /usr/local/bin/pip3.8
     - name: Synchroniser le répertoire local avec S3
       vars:
-          ansible_python_interpreter: /usr/local/bin/python3.8
-
+        ansible_python_interpreter: /usr/local/bin/python3.8
     - name: Synchronize S3 directory to local
       s3_sync:
         bucket: "{{ s3_bucket_name }}"
