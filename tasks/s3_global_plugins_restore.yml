@@ -7,10 +7,6 @@
           - "boto3"
         executable: /usr/local/bin/pip3.8
 
-    - name: Synchroniser le répertoire local avec S3
-      vars:
-        ansible_python_interpreter: /usr/local/bin/python3.8
-
     - name: Synchronize S3 directory to local
       s3_sync:
         bucket: "{{ s3_bucket_name }}"
@@ -19,7 +15,6 @@
         secret_key: "{{ aws_secret_key }}"
         access_key: "{{ aws_access_key }}"
         key_prefix: "{{ s3_remote_directory_plugins }}"
-
 
     - name: Extraire le fichier ZIP 
       command: unzip -o "{{ s3_restore_plugins_name.restore_files_path }}/{{ s3_restore_plugins_name.restore_pattern }}" -d "unzip_folder/"
