@@ -11,7 +11,7 @@
           bucket: "{{ s3_bucket_name }}"
           object: "{{ s3_remote_directory_plugins }}/{{ s3_filename_plugins }}"
           dest: "{{ compose_project_dir }}/s3_global_plugin_restore/{{ s3_filename_plugins }}"
-          mode: sync
+          mode: get
           secret_key: "{{ aws_secret_key }}"
           access_key: "{{ aws_access_key}}"
           region: "{{ region }}"
