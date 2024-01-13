@@ -15,7 +15,15 @@
           secret_key: "{{ aws_secret_key }}"
           access_key: "{{ aws_access_key}}"
           region: "{{ region }}"
-          
+
+    - name: Extraire le fichier ZIP 
+      command: sudo unzip -o {{ s3_restore_file_name.restore_files_path }}/{{ s3_restore_file_name.restore_pattern }} -d unzip_folder/
+
+    - name: Copier les fichiers extraits depuis unzip_folder au reperoire eazytraining
+      command: sudo rsync -a --delete unzip_folder/eazytraining/ eazytraining/
+
+    - name: Remove files from unzip folder
+      command: sudo rm -r unzip_folder/eazytraining/       
   tags:
     - restore_site_s3
 
