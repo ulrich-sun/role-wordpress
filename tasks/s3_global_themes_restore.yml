@@ -13,7 +13,7 @@
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
         
     - name: Extraire le fichier ZIP 
-      command: unzip -o "{{ s3_restore_theme_name.restore_files_path }}/{{ s3_restore_theme_name.restore_pattern }}" -d "unzip_folder/"
+      command: unzip -o "{{ s3_global_theme_restore.restore_files_path }}/{{ s3_global_theme_restore.restore_pattern }}" -d "unzip_folder/"
 
     - name: Copier les fichiers extraits depuis unzip_folder au reperoire eazytraining
       command: sudo rsync -a --delete unzip_folder/ eazytraining/wp-content/themes/
