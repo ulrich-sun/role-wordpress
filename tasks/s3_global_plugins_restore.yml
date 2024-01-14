@@ -8,6 +8,8 @@
         executable: /usr/local/bin/pip3.8
 
     - name: Synchronize S3 directory to local
+      vars:
+          ansible_python_interpreter: /usr/local/bin/python3.8
       s3_sync:
         bucket: "{{ s3_bucket_name }}"
         file_root: "{{ s3_global_plugin_restore }}"
