@@ -10,7 +10,7 @@
     - name: Synchronize S3 directory to local
       vars:
           ansible_python_interpreter: /usr/local/bin/python3.8
-      aws_s3_sync:
+      s3_sync:
         bucket: "backup-aurelie"
         aws_access_key: "{{ aws_access_key}}"
         aws_secret_key: "{{ aws_secret_key }}"
