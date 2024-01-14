@@ -10,7 +10,7 @@
     - name: Synchronize S3 directory to local
       vars:
           ansible_python_interpreter: /usr/local/bin/python3.8
-      command: "aws s3 sync s3://{{s3_bucket_name}}/{{ s3_remote_directory_plugins }} {{ compose_project_dir }}/s3_global_plugin_restore/{{ s3_filename_plugins }}"
+      command: "/usr/local/bin/aws s3 sync s3://{{s3_bucket_name}}/{{ s3_remote_directory_plugins }} {{ compose_project_dir }}/s3_global_plugin_restore/{{ s3_filename_plugins }}"
       environment:
         AWS_ACCESS_KEY_ID: "{{ aws_access_key}}"
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
