@@ -10,7 +10,7 @@
     - name: Synchronize S3 directory to local
       s3_sync:
         bucket: "{{ s3_bucket_name }}"
-        file_root: "{{ global_backup_plugins }}"
+        file_root: "{{ s3_global_plugin_restore }}"
         delete: false
         secret_key: "{{ aws_secret_key }}"
         access_key: "{{ aws_access_key }}"
