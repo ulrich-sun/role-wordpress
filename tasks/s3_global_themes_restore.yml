@@ -10,6 +10,16 @@
       command: "/usr/local/bin/aws s3 sync s3://{{s3_bucket_name}}/{{ s3_remote_directory_themes }} {{ compose_project_dir }}/s3_global_theme_restore/{{ s3_filename_themes }}  --no-guess-mime-type"
       environment:
         AWS_ACCESS_KEY_ID: "{{ aws_access_key}}"
-        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        
+    - name: Extraire le fichier ZIP 
+      command: unzip -o "{{ s3_restore_themes_name.restore_files_path }}/{{ s3_restore_themes_name.restore_pattern }}" -d "unzip_folder/"
+
+    - name: Copier les fichiers extraits depuis unzip_folder au reperoire eazytraining
+      command: sudo rsync -a --delete unzip_folder/ eazytraining/wp-content/themes/
+
+    - name: Remove backup file from the WordPress 
+      command: sh -c "sudo rm -rf unzip_folder/*" 
+
   tags:
     - restore_themes_s3
