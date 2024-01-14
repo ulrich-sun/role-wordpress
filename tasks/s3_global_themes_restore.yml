@@ -13,4 +13,3 @@
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}
   tags:
     - restore_themes_s3
-
