@@ -10,13 +10,15 @@
     - name: Synchronize S3 directory to local
       vars:
           ansible_python_interpreter: /usr/local/bin/python3.8
-      s3_sync:
-        bucket: "{{ s3_bucket_name }}"
-        file_root: "{{ s3_global_plugin_restore }}"
-        delete: false
-        secret_key: "{{ aws_secret_key }}"
-        access_key: "{{ aws_access_key }}"
-        key_prefix: "{{ s3_remote_directory_plugins }}"
+      aws_s3:
+          bucket: "{{ s3_bucket_name }}"
+          object: "{{ s3_remote_directory_plugins }}/{{ s3_filename_plugins }}"
+          dest: "{{ compose_project_dir }}/s3_global_plugin_restore/{{ s3_filename_plugins }}"
+          mode: get
+          secret_key: "{{ aws_secret_key }}"
+          access_key: "{{ aws_access_key}}"
+          region: "{{ region }}"
+          
 
     - name: Extraire le fichier ZIP 
       command: unzip -o "{{ s3_restore_plugins_name.restore_files_path }}/{{ s3_restore_plugins_name.restore_pattern }}" -d "unzip_folder/"
