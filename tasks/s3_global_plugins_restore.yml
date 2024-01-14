@@ -12,11 +12,12 @@
           ansible_python_interpreter: /usr/local/bin/python3.8
       s3_sync:
         bucket: "{{ s3_bucket_name }}"
-        download: yes
         file_root: "{{ compose_project_dir }}/s3_global_plugin_restore/{{ s3_filename_plugins }}"
         key_prefix: "{{ s3_remote_directory_plugins }}"
         aws_access_key: "{{ aws_access_key}}"
         aws_secret_key: "{{ aws_secret_key }}"
+        mode: pull
+        recursive: yes
         region: "{{ region }}"
 
     - name: Extraire le fichier ZIP 
