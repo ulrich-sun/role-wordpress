@@ -13,7 +13,8 @@
       s3_sync:
         bucket: "{{ s3_bucket_name }}"
         download: yes
-        dest: "{{ compose_project_dir }}/s3_global_plugin_restore/{{ s3_filename_plugins }}"
+        file_root: "{{ compose_project_dir }}/s3_global_plugin_restore/{{ s3_filename_plugins }}"
+        key_prefix: "{{ s3_remote_directory_plugins }}"
         aws_access_key: "{{ aws_access_key}}"
         aws_secret_key: "{{ aws_secret_key }}"
         region: "{{ region }}"
