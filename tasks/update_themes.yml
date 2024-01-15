@@ -1,16 +1,16 @@
 ---
 - block:
     - name: Récupérer les thèmes installés avant la mise à jour
-      command: /usr/local/bin/wp theme list --format=json --allow-root --ssh=docker:wordpress
+      command: /usr/local/bin/wp theme list --format=json --allow-root --ssh=docker:{{ wordpress_container_name }}
       register: installed_themes_before_update
       notify: backup_theme_handler
 
     - name: Mettre à jour le thème
-      command: /usr/local/bin/wp theme update "{{ theme_to_update.theme_name }}" --version="{{ theme_to_update.new_version }}" --allow-root --ssh=docker:wordpress
+      command: /usr/local/bin/wp theme update "{{ theme_to_update.theme_name }}" --version="{{ theme_to_update.new_version }}" --allow-root --ssh=docker:{{ wordpress_container_name }}
       register: theme_update_output
 
     - name: Récupérer les thèmes installés après la mise à jour
-      command: /usr/local/bin/wp theme list --format=json --allow-root --ssh=docker:wordpress
+      command: /usr/local/bin/wp theme list --format=json --allow-root --ssh=docker:{{ wordpress_container_name }}
       register: installed_themes_after_update
 
     - name: Afficher le contenu des thèmes après la mise à jour
