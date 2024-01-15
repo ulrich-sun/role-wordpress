@@ -10,7 +10,7 @@
       command: sh -c "sudo unzip -o {{ specific_theme_name_restore.restore_files_path }}/{{ specific_theme_name_restore.restore_pattern }} -d unzip_folder"
 
     - name: Copier les fichiers extraits depuis unzip_folder au reperoire eazytraining
-      command: sh -c "sudo rsync -a unzip_folder/ eazytraining/wp-content/themes/"
+      command: sh -c "sudo rsync -a unzip_folder/ {{ wordpress_site }}/wp-content/themes/"
 
     - name: Remove backup file from the WordPress
       command: sh -c "sudo rm -rf unzip_folder/*"
