@@ -1,6 +1,6 @@
 - block:
     - name: Obtenir la liste des plugins installés
-      command: /usr/local/bin/wp plugin list --format=json --allow-root --ssh=docker:wordpress
+      command: /usr/local/bin/wp plugin list --format=json --allow-root --ssh=docker:{{ wordpress_container_name }}
       register: plugins_list_output
 
     - name: Charger le contenu actuel du fichier
