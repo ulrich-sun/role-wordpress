@@ -1,13 +1,13 @@
 ---
 - block:
     - name: Désactivation du thème actuel
-      command: /usr/local/bin/wp theme activate "{{ new_theme }}" --allow-root --ssh=docker:wordpress
+      command: /usr/local/bin/wp theme activate "{{ new_theme }}" --allow-root --ssh=docker:{{ wordpress_container_name }}
       vars:
         new_theme: "{{ new_theme_to_activate }}"
       when: new_theme_to_activate is defined
 
     - name: Désinstallation des thèmes
-      command: /usr/local/bin/wp theme uninstall "{{ item }}" --allow-root --ssh=docker:wordpress
+      command: /usr/local/bin/wp theme uninstall "{{ item }}" --allow-root --ssh=docker:{{ wordpress_container_name }}
       loop: "{{ themes_to_uninstall }}"
       when: themes_to_uninstall is defined and themes_to_uninstall | length > 0
   tags:
