@@ -2,7 +2,7 @@
 - block:
     - name: Set variables
       set_fact:
-        container_name: "wordpress"
+        container_name: "{{ wordpress_container_name }}"
         wp_dir: "."
         site_name: "EAZYTraining"
         timestamp: "{{ ansible_date_time.iso8601 | regex_replace('[-T:.]', '') | regex_replace('([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{6})', '\\1-\\2-\\3-\\4') }}"
