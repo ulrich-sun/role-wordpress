@@ -20,10 +20,10 @@
       command: docker cp {{ s3_restore_db_name.restore_files_path }}/{{ s3_restore_db_name.restore_pattern }} db:{{ s3_restore_db_name.restore_pattern }}
 
     - name: Restaurer le fichier SQL dans la base de données MySQL
-      command: docker exec db sh -c "exec mysql -u{{ wp_db_user }} -p{{ wp_db_psw }} {{ wp_db_name }} < {{ s3_restore_db_name.restore_pattern }}"
+      command: docker exec {{ db_container_name }} sh -c "exec mysql -u{{ wp_db_user }} -p{{ wp_db_psw }} {{ wp_db_name }} < {{ s3_restore_db_name.restore_pattern }}"
 
     - name: Remove file from wordpress container
-      command: docker exec db rm {{ s3_restore_db_name.restore_pattern }}
+      command: docker exec {{ db_container_name }} rm {{ s3_restore_db_name.restore_pattern }}
 
   tags:
     - restore_db_s3
