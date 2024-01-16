@@ -7,22 +7,15 @@
           - "boto3"
         executable: /usr/local/bin/pip3.8
         
-    - name: Supprimer l'ancienne version d'AWS CLI
-      command: "sudo yum remove awscli"
+    - name: Vérifier l'installation d'AWS CLI
+      command: "aws --version"
+      register: aws_version
       ignore_errors: true  # Ignorer les erreurs si awscli n'est pas déjà installé
 
-    - name: Télécharger AWS CLI
-      command: "curl -o awscliv2.zip https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
-      args:
-        chdir: "/tmp"
-
-    - name: Extraire AWS CLI
-      command: "unzip awscliv2.zip"
-      args:
-        chdir: "/tmp"
-
-    - name: Installer AWS CLI
-      command: "sudo /tmp/aws/install"
+    - name: Télécharger et installer AWS CLI si ce n'est pas déjà installé
+      command: "curl -o /tmp/awscliv2.zip https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip && unzip -q /tmp/awscliv2.zip && sudo /tmp/aws/install"
+      when: "'not installed' in aws_version.stderr"
+      
     - name: Synchronize S3 directory to local
       vars:
           ansible_python_interpreter: /usr/local/bin/python3.8
