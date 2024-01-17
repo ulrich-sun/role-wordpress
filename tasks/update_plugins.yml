@@ -18,62 +18,62 @@
   tags:
     - update_plugin
     
-  - name: Récupérer les plugins installés après la mise à jour
-    command: /usr/local/bin/wp plugin list --format=json --allow-root --ssh=docker:{{ wordpress_container_name }}
-    register: installed_plugins_after_update
+- name: Récupérer les plugins installés après la mise à jour
+  command: /usr/local/bin/wp plugin list --format=json --allow-root --ssh=docker:{{ wordpress_container_name }}
+  register: installed_plugins_after_update
   tags:
     - update_plugin
     
-  - name: Afficher le contenu des plugins après la mise à jour
-    debug:
-      var: installed_plugins_after_update.stdout | from_json
+- name: Afficher le contenu des plugins après la mise à jour
+  debug:
+    var: installed_plugins_after_update.stdout | from_json
   tags:
     - update_plugin
     
-  - name: Comparer les versions des plugins avant et après la mise à jour
-    set_fact:
-      updated_plugins: []
-    when:
-      - installed_plugins_before_update is defined
-      - installed_plugins_after_update is defined
+- name: Comparer les versions des plugins avant et après la mise à jour
+  set_fact:
+    updated_plugins: []
+  when:
+    - installed_plugins_before_update is defined
+    - installed_plugins_after_update is defined
   tags:
     - update_plugin
     
-  - name: Initialiser la variable updated_plugin_details
-    set_fact:
-      updated_plugin_details: []
+- name: Initialiser la variable updated_plugin_details
+  set_fact:
+    updated_plugin_details: []
   tags:
     - update_plugin
     
-  - name: Collecter les détails du plugin mis à jour avant et après la mise à jour
-    set_fact:
-      updated_plugin_details: "{{ updated_plugin_details | default([]) + [{'plugin_name': item.name, 'before_update': plugin_before_update, 'after_update': plugin_after_update, 'update_date': ansible_date_time.iso8601}] }}"
-    vars:
-      plugin_before_update: "{{ installed_plugins_before_update.stdout | from_json | selectattr('name', 'equalto', item.name) | list | first }}"
-      plugin_after_update: "{{ installed_plugins_after_update.stdout | from_json | selectattr('name', 'equalto', item.name) | list | first }}"
-    loop: "{{ installed_plugins_after_update.stdout | from_json }}"
-    loop_control:
-      loop_var: item
-    when:
-      - item.name in installed_plugins_before_update.stdout | from_json | map(attribute='name')
-      - item.version != (installed_plugins_before_update.stdout | from_json | selectattr('name', 'equalto', item.name) | map(attribute='version') | first)
+- name: Collecter les détails du plugin mis à jour avant et après la mise à jour
+  set_fact:
+    updated_plugin_details: "{{ updated_plugin_details | default([]) + [{'plugin_name': item.name, 'before_update': plugin_before_update, 'after_update': plugin_after_update, 'update_date': ansible_date_time.iso8601}] }}"
+  vars:
+    plugin_before_update: "{{ installed_plugins_before_update.stdout | from_json | selectattr('name', 'equalto', item.name) | list | first }}"
+    plugin_after_update: "{{ installed_plugins_after_update.stdout | from_json | selectattr('name', 'equalto', item.name) | list | first }}"
+  loop: "{{ installed_plugins_after_update.stdout | from_json }}"
+  loop_control:
+    loop_var: item
+  when:
+    - item.name in installed_plugins_before_update.stdout | from_json | map(attribute='name')
+    - item.version != (installed_plugins_before_update.stdout | from_json | selectattr('name', 'equalto', item.name) | map(attribute='version') | first)
   tags:
     - update_plugin
     
-  - name: Créer le fichier s'il n'existe pas
-    file:
-      path: "{{ compose_project_dir }}/specific_backup_plugins/{{ plugin_to_update.plugin_name }}.yaml"
-      state: touch
-    when: updated_plugin_details | length > 0
+- name: Créer le fichier s'il n'existe pas
+  file:
+    path: "{{ compose_project_dir }}/specific_backup_plugins/{{ plugin_to_update.plugin_name }}.yaml"
+    state: touch
+  when: updated_plugin_details | length > 0
   tags:
     - update_plugin
     
-  - name: Ajouter les détails des plugins mis à jour au fichier existant
-    lineinfile:
-      path: "{{ compose_project_dir }}/specific_backup_plugins/{{ plugin_to_update.plugin_name }}.yaml"
-      line: "{{ updated_plugin_details | to_yaml | indent(width=2) }}"
-      insertafter: EOF
-    when: updated_plugin_details | length > 0 
+- name: Ajouter les détails des plugins mis à jour au fichier existant
+  lineinfile:
+    path: "{{ compose_project_dir }}/specific_backup_plugins/{{ plugin_to_update.plugin_name }}.yaml"
+    line: "{{ updated_plugin_details | to_yaml | indent(width=2) }}"
+    insertafter: EOF
+  when: updated_plugin_details | length > 0 
   tags:
     - update_plugin
 
