@@ -1,11 +1,11 @@
 ---
-    - name: Récupérer les plugins installés avant la mise à jour
-      command: /usr/local/bin/wp plugin list --format=json --allow-root --ssh=docker:{{ wordpress_container_name }}
-      register: installed_plugins_before_update
-      notify: 
-        - backup_plugin_handler
-        - activate_plugin_update
-        - activate_plugin_malcare-security_update
+- name: Récupérer les plugins installés avant la mise à jour
+  command: /usr/local/bin/wp plugin list --format=json --allow-root --ssh=docker:{{ wordpress_container_name }}
+  register: installed_plugins_before_update
+  notify: 
+    - backup_plugin_handler
+    - activate_plugin_update
+    - activate_plugin_malcare-security_update
   tags:
     - update_plugin
     
