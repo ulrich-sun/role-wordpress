@@ -9,12 +9,12 @@
   tags:
     - update_plugin
     
-  - name: Mettre à jour le plugin
-    command: /usr/local/bin/wp plugin update "{{ plugin_to_update.plugin_name }}" --version="{{ plugin_to_update.new_version }}" --allow-root --ssh=docker:{{ wordpress_container_name }}
-    register: plugin_update_output
-    notify:
-      - deactivate_plugin_update
-      - activate_plugin_malcare-security_update
+- name: Mettre à jour le plugin
+  command: /usr/local/bin/wp plugin update "{{ plugin_to_update.plugin_name }}" --version="{{ plugin_to_update.new_version }}" --allow-root --ssh=docker:{{ wordpress_container_name }}
+  register: plugin_update_output
+  notify:
+    - deactivate_plugin_update
+    - activate_plugin_malcare-security_update
   tags:
     - update_plugin
     
