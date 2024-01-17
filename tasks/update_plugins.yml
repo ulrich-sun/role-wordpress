@@ -3,9 +3,7 @@
     - name: Récupérer les plugins installés avant la mise à jour
       command: /usr/local/bin/wp plugin list --format=json --allow-root --ssh=docker:wordpress
       register: installed_plugins_before_update
-    - name: Notify handlers avant la mise à jour
       meta: flush_handlers
-      when: installed_plugins_before_update.changed
       notify: 
         - backup_plugin_handler
         - activate_plugin_update
