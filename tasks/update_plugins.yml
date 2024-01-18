@@ -21,9 +21,6 @@
       notify:
         - deactivate_plugin_update
         - activate_plugin_malcare-security_update
-        
-    - name: "Flush handlers deactivate rights of plugins"
-      meta: flush_handlers
       
     - name: Récupérer les plugins installés après la mise à jour
       command: /usr/local/bin/wp plugin list --format=json --allow-root --ssh=docker:wordpress
