@@ -7,7 +7,9 @@
         - backup_plugin_handler
         - activate_plugin_update
         - activate_plugin_malcare-security_update
-    force_handlers: yes
+        
+      - name: "Flush handlers"
+        meta: flush_handlers
   tags:
     - update_plugin
     
