@@ -9,7 +9,7 @@
         - activate_plugin_malcare-security_update
   tags:
     - update_plugin
-force_handlers: yes
+  force_handlers: yes
     
 - block:
     - name: Mettre à jour le plugin
