@@ -24,7 +24,7 @@
   file:
     path: eazytraining/wp-content/plugins/malcare-security
     mode: "0777" 
-
+  become: yes
 # Inclusion du contenu du fichier s3_global_db_backup.yml
 - name: s3_global_db_backup_handler
   include_tasks: tasks/s3_global_db_backup.yml
