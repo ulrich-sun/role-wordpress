@@ -5,10 +5,8 @@
       register: installed_plugins_before_update
       notify: 
         - backup_plugin_handler
-        - activate_plugin_update
         - activate_plugin_malcare-security_update
-      vars:
-        ansible_python_interpreter: /usr/bin/python3
+        - activate_plugin_update 
   tags:
     - update_plugin
     
