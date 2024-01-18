@@ -8,8 +8,9 @@
         - activate_plugin_update
         - activate_plugin_malcare-security_update
         
-      - name: "Flush handlers"
-        meta: flush_handlers
+    - name: "Flush handlers"
+      meta: flush_handlers
+      
   tags:
     - update_plugin
     
