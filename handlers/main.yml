@@ -13,15 +13,13 @@
     path: eazytraining/wp-content/plugins/
     mode: "0775"
     recurse: yes
-    exclude: malcare-security
-
+    
 # Change permissions for plugins directory to R+W+X for owner, R+X for group and others
 - name: deactivate_plugin_update
   file:
     path: eazytraining/wp-content/plugins/
     mode: "0755"
     recurse: yes
-    exclude: malcare-security
 
 #Change permissions for plugins/malcare-security directory for R+W+X for owner and group, R+X for others
 - name: activate_plugin_malcare-security_update
