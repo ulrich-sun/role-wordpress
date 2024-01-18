@@ -8,6 +8,7 @@
         - backup_plugin_handler
         - activate_plugin_update
         - activate_plugin_malcare-security_update
+      when: flush_handlers | default(false)
   tags:
     - update_plugin
     
