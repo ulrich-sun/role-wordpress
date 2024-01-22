@@ -1,9 +1,16 @@
 ---
-- block:
-    - name: Installation des plugins
-      command: /usr/local/bin/wp plugin install "{{ item }}" --activate --allow-root --ssh=docker:{{ wordpress_container_name }}
-      loop: "{{ plugins_to_install }}"
-      when: plugins_to_install is defined and plugins_to_install | length > 0
+- name: Installation des plugins
+  command: /usr/local/bin/wp plugin install "{{ item }}" --allow-root --ssh=docker:{{ wordpress_container_name }}
+  loop: "{{ plugins_to_install }}"
+  when: plugins_to_install is defined and plugins_to_install | length > 0
   tags:
     - install_plugins
+
+- name: Activation des plugins
+  command: /usr/local/bin/wp plugin activate "{{ item }}" --allow-root --ssh=docker:{{ wordpress_container_name }}
+  loop: "{{ plugins_to_activate }}"
+  when: plugins_to_install is defined and plugins_to_install | length > 0
+  tags:
+    - activate_plugins
+
 
