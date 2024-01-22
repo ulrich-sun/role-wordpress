@@ -8,7 +8,12 @@
   include_tasks: install_plugins.yml
   tags:
     - install_plugins
-
+    
+- name: Activate plugins
+  include_tasks: install_plugins.yml
+  tags:
+    - activate_plugins
+    
 - name: Uninstall plugins
   include_tasks: uninstall_plugins.yml
   tags:
