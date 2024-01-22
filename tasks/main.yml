@@ -19,6 +19,11 @@
   tags:
     - uninstall_plugins
 
+- name: Deactivate plugins
+  include_tasks: uninstall_plugins.yml
+  tags:
+    - deactivate_plugins
+
 - name: Lists installed plugins
   include_tasks: list_plugins.yml
   tags:
