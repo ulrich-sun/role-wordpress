@@ -11,10 +11,6 @@
     - name: "Flush handlers backup and activate rights of plugins"
       meta: flush_handlers
       
-  tags:
-    - update_plugin
-    
-- block:
     - name: Mettre à jour le plugin
       command: /usr/local/bin/wp plugin update "{{ plugin_to_update.plugin_name }}" --version="{{ plugin_to_update.new_version }}" --allow-root --ssh=docker:wordpress
       register: plugin_update_output
