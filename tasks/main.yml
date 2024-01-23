@@ -44,6 +44,11 @@
   tags:
     - uninstall_themes
 
+- name: Deactivate themes
+  include_tasks: uninstall_themes.yml
+  tags:
+    - deactivate_themes
+
 - name: Update theme installed
   include_tasks: update_themes.yml
   tags:
