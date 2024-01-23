@@ -3,7 +3,12 @@
   include_tasks: deploy_wordpress.yml
   tags:
     - deploy
-
+    
+- name: Update Wordpress
+  include_tasks: install_plugins.yml
+  tags:
+    - update_wordpress
+    
 - name: Install plugins
   include_tasks: install_plugins.yml
   tags:
