@@ -6,7 +6,7 @@
         new_theme: "{{ new_theme_to_activate }}"
       when: new_theme_to_activate is defined
   tags:
-    - uninstall_themes
+    - deactivate_themes
 
 - block:
     - name: Vérification du statut du thème à désinstaller
