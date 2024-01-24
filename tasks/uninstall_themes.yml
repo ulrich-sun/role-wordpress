@@ -15,12 +15,9 @@
       register: theme_status
       when: themes_to_uninstall is defined
       
-    - debug:
-        var: theme_status
-        
     - name: Désinstallation des thèmes
-      command: "/usr/local/bin/wp theme uninstall '{{ item }}' --allow-root --ssh=docker:{{ wordpress_container_name }}"
-      loop: "{{ themes_to_uninstall }}"
+      command: "/usr/local/bin/wp theme uninstall '{{ item.item }}' --allow-root --ssh=docker:{{ wordpress_container_name }}"
+      loop: "{{ theme_status.results }}"
       when: item.stdout is defined and item.stdout | regex_search('Status:\\s*Inactive')
   tags:
     - uninstall_themes
