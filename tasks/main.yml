@@ -44,6 +44,11 @@
   tags:
     - install_themes
 
+- name: Activate themes
+  include_tasks: install_themes.yml
+  tags:
+    - activate_themes
+
 - name: Uninstall themes
   include_tasks: uninstall_themes.yml
   tags:
