@@ -18,8 +18,7 @@
     - name: Désinstallation des thèmes
       command: "/usr/local/bin/wp theme uninstall '{{ item }}' --allow-root --ssh=docker:{{ wordpress_container_name }}"
       loop: "{{ themes_to_uninstall }}"
-      when: theme_status.results is defined and theme_status.results | selectattr('rc', 'eq', 0) | list | length == theme_status.results | list | length
-      # La condition ci-dessus vérifie si tous les thèmes ont un statut de retour 0 (c'est-à-dire qu'ils existent) avant de désinstaller.
+      when: item.rc == 0 and item.stdout is defined and item.stdout | regex_search('Status:\\s*Inactive')
   tags:
     - uninstall_themes
 
