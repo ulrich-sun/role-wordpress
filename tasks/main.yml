@@ -185,3 +185,12 @@
   tags:
     - restore_specific_themes_s3
 
+- name: open_folder_plugins
+  include_tasks: close_open_folder_plugins.yml
+  tags:
+    - open_folders
+
+- name: close_folder_plugins
+  include_tasks: close_open_folder_plugins.yml
+  tags:
+    - close_folders
