@@ -16,7 +16,7 @@
 
     - name: Désinstallation des thèmes
       command: /usr/local/bin/wp theme uninstall "{{ theme_to_uninstall }}" --allow-root --ssh=docker:{{ wordpress_container_name }}
-      when: theme_status is defined and theme_status.stdout | regex_search('Status:\\s*inactive')
+      when: theme_status is defined and theme_status.stdout is defined and theme_status.stdout | regex_search('Status:\\s*inactive')
       # La condition ci-dessus vérifie si le statut du thème est "Inactive" avant de désinstaller.
   tags:
     - uninstall_themes
