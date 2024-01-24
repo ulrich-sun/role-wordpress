@@ -12,7 +12,7 @@
     - name: Vérification du statut du thème à désinstaller
       command: /usr/local/bin/wp theme status "{{ theme_to_uninstall }}" --allow-root --ssh=docker:{{ wordpress_container_name }}
       register: theme_status
-      when: theme_to_uninstall is defined
+      when: themes_to_uninstall is defined
 
     - name: Désinstallation des thèmes
       command: /usr/local/bin/wp theme uninstall "{{ theme_to_uninstall }}" --allow-root --ssh=docker:{{ wordpress_container_name }}
