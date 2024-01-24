@@ -53,4 +53,5 @@
 - name: s3_backup_site_handler
   include_tasks: tasks/s3_backup_site.yml
 
-
+- name: global_backup_db
+  include_tasks: tasks/global_backup_db.yml
