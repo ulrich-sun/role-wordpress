@@ -14,7 +14,10 @@
       loop: "{{ themes_to_uninstall }}"
       register: theme_status
       when: themes_to_uninstall is defined
-
+      
+    - debug:
+        var: theme_status
+        
     - name: Désinstallation des thèmes
       command: "/usr/local/bin/wp theme uninstall '{{ item }}' --allow-root --ssh=docker:{{ wordpress_container_name }}"
       loop: "{{ themes_to_uninstall }}"
