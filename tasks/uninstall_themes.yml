@@ -9,8 +9,9 @@
     - deactivate_themes
 
 - block:
-    - name: Vérification du statut du thème à désinstaller
-      command: /usr/local/bin/wp theme status "{{ themes_to_uninstall }}" --allow-root --ssh=docker:{{ wordpress_container_name }}
+    - name: Vérification du statut des thèmes à désinstaller
+      command: "/usr/local/bin/wp theme status '{{ item }}' --allow-root --ssh=docker:{{ wordpress_container_name }}"
+      loop: "{{ themes_to_uninstall }}"
       register: theme_status
       when: themes_to_uninstall is defined
 
