@@ -15,8 +15,6 @@
 
 
 - name: backuper avant Mise à jour de WordPress avec WP-CLI
-  notify:
-    - global_backup
   tags:
     - update_wordpress
     
