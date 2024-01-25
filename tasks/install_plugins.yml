@@ -23,5 +23,7 @@
       
     - name: Mise à jour de WordPress avec WP-CLI
       command: /usr/local/bin/wp core update --allow-root --ssh=docker:{{ wordpress_container_name }}
+      
   tags:
     - update_wordpress
+
