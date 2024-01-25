@@ -13,9 +13,17 @@
   tags:
     - activate_plugins
 
-- name: Mise à jour de WordPress avec WP-CLI
-  command: /usr/local/bin/wp core update --allow-root --ssh=docker:{{ wordpress_container_name }}
-  notify:
-    - global_backup
+- block:
+    - name: backuper avant Mise à jour de WordPress avec WP-CLI
+      notify:
+        - global_backup
+
+    - name: "Flush handlers backup before update site"
+      meta: flush_handlers
+      
+    - name: Mise à jour de WordPress avec WP-CLI
+      command: /usr/local/bin/wp core update --allow-root --ssh=docker:{{ wordpress_container_name }}
+      notify:
+        - global_backup
   tags:
     - update_wordpress
