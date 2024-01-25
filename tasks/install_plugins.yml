@@ -15,7 +15,7 @@
     
 - block:
     - name: backuper avant Mise à jour de WordPress avec WP-CLI
-      command: /usr/local/bin/wp core version --allow-root
+      command: /usr/local/bin/wp core version --allow-root --ssh=docker:{{ wordpress_container_name }}
       notify:
         - global_backup
         
