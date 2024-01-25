@@ -12,14 +12,12 @@
   when: plugins_to_activate is defined and plugins_to_activate | length > 0
   tags:
     - activate_plugins
-
-
-- name: backuper avant Mise à jour de WordPress avec WP-CLI
-  tags:
-    - update_wordpress
     
 - block:
-
+    - name: backuper avant Mise à jour de WordPress avec WP-CLI
+      notify:
+        - global_backup
+        
     - name: "Flush handlers backup before update site"
       meta: flush_handlers
       
