@@ -1,14 +1,5 @@
 ---
 - block:
-    - name: Change ownership recursively
-      become: yes
-      become_user: root
-      file:
-        path: eazytraining
-        state: directory
-        recurse: yes
-        owner: centos
-        group: 33
     
     - name: Installation des plugins
       command: /usr/local/bin/wp plugin install "{{ item }}" --ssh=docker:{{ wordpress_container_name }}
