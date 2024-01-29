@@ -6,9 +6,20 @@
   tags:
     - deactivate_plugins
 
-- name: Désinstallation des plugins
-  command: /usr/local/bin/wp plugin uninstall "{{ item }}" --ssh=docker:{{ wordpress_container_name }}
-  loop: "{{ plugins_to_uninstall }}"
-  when: plugins_to_uninstall is defined and plugins_to_uninstall | length > 0
+- block:
+    - name: Change ownership recursively
+      become: yes
+      become_user: root
+      file:
+        path: eazytraining
+        state: directory
+        recurse: yes
+        owner: centos
+        group: 33
+        
+    - name: Désinstallation des plugins
+      command: /usr/local/bin/wp plugin uninstall "{{ item }}" --ssh=docker:{{ wordpress_container_name }}
+      loop: "{{ plugins_to_uninstall }}"
+      when: plugins_to_uninstall is defined and plugins_to_uninstall | length > 0
   tags:
     - uninstall_plugins
