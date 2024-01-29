@@ -1,8 +1,19 @@
 ---
-- name: Installation des plugins
-  command: sudo -u \#33 -i  -- /usr/local/bin/wp plugin install "{{ item }}" --ssh=docker:{{ wordpress_container_name }}
-  loop: "{{ plugins_to_install }}"
-  when: plugins_to_install is defined and plugins_to_install | length > 0
+- block:
+    - name: Change ownership recursively
+      become: yes
+      become_user: root
+      file:
+        path: eazytraining
+        state: directory
+        recurse: yes
+        owner: centos
+        group: 33
+    
+    - name: Installation des plugins
+      command: sudo -u \#33 -i  -- /usr/local/bin/wp plugin install "{{ item }}" --ssh=docker:{{ wordpress_container_name }}
+      loop: "{{ plugins_to_install }}"
+      when: plugins_to_install is defined and plugins_to_install | length > 0
   tags:
     - install_plugins
 
