@@ -1,6 +1,6 @@
 ---
 - name: Désactivation des plugins
-  command: /usr/local/bin/wp plugin deactivate "{{ item }}" --ssh=docker:{{ wordpress_container_name }}
+  command: sudo -u {{ user_uid }} -i -- /usr/local/bin/wp plugin deactivate "{{ item }}" --ssh=docker:{{ wordpress_container_name }}
   loop: "{{ plugins_to_deactivate }}"
   when: plugins_to_deactivate is defined and plugins_to_deactivate | length > 0
   tags:
