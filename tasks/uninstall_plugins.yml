@@ -18,7 +18,7 @@
         group: 33
         
     - name: Désinstallation des plugins
-      command: docker exec --user 33 {{ wordpress_container_name }} wp plugin install "{{ item }}"  --path='/var/www/html/'
+      command: docker exec --user 33 {{ wordpress_container_name }} wp plugin uninstall "{{ item }}"  --path='/var/www/html/'
       loop: "{{ plugins_to_uninstall }}"
       when: plugins_to_uninstall is defined and plugins_to_uninstall | length > 0
   tags:
