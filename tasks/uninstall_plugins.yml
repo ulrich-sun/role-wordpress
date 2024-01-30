@@ -18,7 +18,7 @@
         group: 33
         
     - name: Désinstallation des plugins
-      command: /usr/local/bin/wp plugin uninstall "{{ item }}" --ssh=docker:{{ wordpress_container_name }}
+      command: /usr/local/bin/wp plugin uninstall "{{ item }}" --allow-root --ssh=docker:{{ wordpress_container_name }}
       loop: "{{ plugins_to_uninstall }}"
       when: plugins_to_uninstall is defined and plugins_to_uninstall | length > 0
   tags:
