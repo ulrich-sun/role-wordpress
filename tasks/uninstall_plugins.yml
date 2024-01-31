@@ -17,6 +17,6 @@
       loop: "{{ plugins_to_uninstall }}"
       when:
         - plugins_to_uninstall is defined and plugins_to_uninstall | length > 0
-        - "plugin_directory_status.stat.mode is match('...w......')"
+        - "plugin_directory_status.stat.mode == '775'"
   tags:
     - uninstall_plugins
