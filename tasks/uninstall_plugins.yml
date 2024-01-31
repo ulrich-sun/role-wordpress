@@ -7,19 +7,16 @@
     - deactivate_plugins
 
 - block:
-    - name: Change ownership recursively
-      become: yes
-      become_user: root
-      file:
-        path: eazytraining
-        state: directory
-        recurse: yes
-        owner: centos
-        group: 33
+    - name: Vérifier les permissions d'écriture sur le dossier des plugins
+      stat:
+        path: "{{ wordpress_directory }}/wp-content/plugins"
+      register: plugin_directory_status
         
     - name: Désinstallation des plugins
       command: docker exec --user 33 {{ wordpress_container_name }} wp plugin uninstall "{{ item }}"  
       loop: "{{ plugins_to_uninstall }}"
-      when: plugins_to_uninstall is defined and plugins_to_uninstall | length > 0
+      when:
+        - plugins_to_uninstall is defined and plugins_to_uninstall | length > 0
+        - plugin_directory_status.stat.writable
   tags:
     - uninstall_plugins
