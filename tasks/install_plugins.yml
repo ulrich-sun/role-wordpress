@@ -1,10 +1,17 @@
 ---
 - block:
     
+    - name: Vérifier les permissions d'écriture sur le dossier des plugins
+      stat:
+        path: "{{ wordpress_directory }}/wp-content/plugins"
+      register: plugin_directory_status
+    
     - name: Installation des plugins
-      command: docker exec --user 33 {{ wordpress_container_name }} /usr/local/bin/wp plugin install "{{ item }}" 
+      command: docker exec --user 33 {{ wordpress_container_name }} /usr/local/bin/wp plugin install "{{ item }}"
       loop: "{{ plugins_to_install }}"
-      when: plugins_to_install is defined and plugins_to_install | length > 0
+      when:
+        - plugins_to_install is defined and plugins_to_install | length > 0
+        - plugin_directory_status.stat.writable
   tags:
     - install_plugins
 
