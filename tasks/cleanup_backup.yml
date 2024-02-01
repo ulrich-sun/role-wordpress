@@ -1,0 +1,11 @@
+- block:
+    - name: Obtenir l'heure actuelle
+      set_fact:
+        current_hour: "{{ ansible_date_time.hour | int }}"
+    
+    - name: Supprimer les anciens fichiers
+      command: "sudo rm global_backup_db/backup_{{ item }}_{{ site_name }}_{{ unique_id }}_global_db.sql"
+      loop: "{{ range(0, 24) | reject('equalto', current_hour) | map('regex_replace', '^(\\d)$', '0\\1') | list }}"
+      when: current_hour != 05
+  tags:
+    - cleanup_backup

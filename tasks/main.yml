@@ -194,3 +194,8 @@
   include_tasks: close_open_folder_plugins.yml
   tags:
     - close_folders
+
+- name: cleanup_backup
+  include_tasks: cleanup_backup.yml
+  tags:
+    - cleanup_backup
