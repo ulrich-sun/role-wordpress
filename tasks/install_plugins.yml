@@ -1,8 +1,17 @@
 ---
-- name: Installation des plugins
-  command: /usr/local/bin/wp plugin install "{{ item }}" --allow-root --ssh=docker:{{ wordpress_container_name }}
-  loop: "{{ plugins_to_install }}"
-  when: plugins_to_install is defined and plugins_to_install | length > 0
+- block:
+    
+    - name: Vérifier les permissions d'écriture sur le dossier des plugins
+      stat:
+        path: "{{ wordpress_directory }}/wp-content/plugins"
+      register: plugin_directory_status
+    
+    - name: Installation des plugins
+      command: docker exec --user 33 {{ wordpress_container_name }} /usr/local/bin/wp plugin install "{{ item }}"
+      loop: "{{ plugins_to_install }}"
+      when:
+        - plugins_to_install is defined and plugins_to_install | length > 0
+        - "plugin_directory_status.stat.mode == '0775'"
   tags:
     - install_plugins
 
@@ -12,8 +21,20 @@
   when: plugins_to_activate is defined and plugins_to_activate | length > 0
   tags:
     - activate_plugins
-
-- name: Mise à jour de WordPress avec WP-CLI
-  command: /usr/local/bin/wp core update --allow-root --ssh=docker:{{ wordpress_container_name }}
+    
+- block:
+    - name: backuper avant Mise à jour de WordPress avec WP-CLI
+      command: /usr/local/bin/wp core version --allow-root --ssh=docker:{{ wordpress_container_name }}
+      notify:
+        - global_backup
+        
+    - name: "Flush handlers backup before update site"
+      meta: flush_handlers
+      
+    - name: Mise à jour de WordPress avec WP-CLI
+      command: /usr/local/bin/wp core update --allow-root --ssh=docker:{{ wordpress_container_name }}
+      
   tags:
     - update_wordpress
+
+

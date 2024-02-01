@@ -55,3 +55,6 @@
 
 - name: global_backup_db
   include_tasks: tasks/global_backup_db.yml
+
+- name: global_backup
+  include_tasks: tasks/global_backup.yml
