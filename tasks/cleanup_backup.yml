@@ -1,8 +1,4 @@
 - block:
-    - name: Obtenir l'heure actuelle
-      set_fact:
-        current_hour: "{{ ansible_date_time.hour | int }}"
-
     - name: Obtenir la liste des fichiers de sauvegarde
       find:
         paths: "global_backup_db/"
@@ -12,8 +8,6 @@
     - name: Supprimer les anciens fichiers
       command: "rm {{ item.path }}"
       loop: "{{ backup_files.files }}"
-      when: "item.path | regex_search('backup_(\\d{4}-\\d{2}-\\d{2}-\\d{6})_EAZYTraining_(\\w+)_global_db.sql') is match and current_hour != '05'"
-      vars:
-        current_hour: "{{ ansible_date_time.hour | int }}"
+      when: "item.path | regex_replace('backup_(\\d{4}-\\d{2}-\\d{2}-)(\\d{2})\\d{4}_EAZYTraining_\\w+_global_db.sql', '\\2') != '05'"
   tags:
     - cleanup_backup
