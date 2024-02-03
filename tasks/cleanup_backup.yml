@@ -7,7 +7,7 @@
       
     - name: Afficher le résultat de regex_replace
       debug:
-        var: "item.path | regex_replace('^.{29}(.{2}).*', '\\1')"
+        var: "item.path | regex_replace('^.{29}(.{2}).*', '\\2')"
       loop: "{{ backup_files.files }}"
     - name: Supprimer les anciens fichiers
       command: "rm {{ item.path }}"
