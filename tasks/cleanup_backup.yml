@@ -6,7 +6,7 @@
       register: backup_files
       
     - name: Afficher le résultat de regex_replace
-      command: sh -c "echo backup_files.paths"
+      command: sh -c "echo {{backup_files.paths}}"
       #debug:
         #var: item.path | regex_search('backup_(\\d{4}-\\d{2}-\\d{2}-)(\\d{2})\\d{4}_EAZYTraining_\\w+_global_db.sql', '\\2') | default('') | slice(0, 2)
       #loop: "{{ backup_files.files }}"
