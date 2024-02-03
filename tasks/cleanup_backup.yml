@@ -4,11 +4,12 @@
         paths: "global_backup_db/"
         patterns: "backup_*_EAZYTraining_*_global_db.sql"
       register: backup_files
-      command: sh -c "echo backup_files.paths"
+      
     - name: Afficher le résultat de regex_replace
-      debug:
-        var: item.path | regex_search('backup_(\\d{4}-\\d{2}-\\d{2}-)(\\d{2})\\d{4}_EAZYTraining_\\w+_global_db.sql', '\\2') | default('') | slice(0, 2)
-      loop: "{{ backup_files.files }}"
+      command: sh -c "echo backup_files.paths"
+      #debug:
+        #var: item.path | regex_search('backup_(\\d{4}-\\d{2}-\\d{2}-)(\\d{2})\\d{4}_EAZYTraining_\\w+_global_db.sql', '\\2') | default('') | slice(0, 2)
+      #loop: "{{ backup_files.files }}"
     - name: Supprimer les anciens fichiers
       command: "rm {{ item.path }}"
       loop: "{{ backup_files.files }}"
