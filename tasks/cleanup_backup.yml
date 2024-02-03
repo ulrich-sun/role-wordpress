@@ -6,9 +6,10 @@
       register: backup_files
       
     - name: Afficher le résultat de regex_replace
-      #debug:
+      debug:
         #var: item.path | regex_search('backup_(\\d{4}-\\d{2}-\\d{2}-)(\\d{2})\\d{4}_EAZYTraining_\\w+_global_db.sql', '\\2') | default('') | slice(0, 2)
-      db: "{{ item.path | regex_search('.{18}(.{2})') }}"
+        var: item.path | regex_search('.{18}(.{2})')
+      #db: "{{ item.path | regex_search('.{18}(.{2})') }}"
       loop: "{{ backup_files.files }}"
     - name: Supprimer les anciens fichiers
       command: "rm {{ item.path }}"
