@@ -15,6 +15,6 @@
       loop: "{{ backup_files.files }}"
       loop_control:
         label: "{{ item.path }}"
-      when: item.path | regex_replace('^.{35}(.{2}).*', '\\1') != '05' 
+      when: item.path | regex_replace('^.{35}(.{2}).*', '\\1') == '05' 
   tags:
     - cleanup_backup
