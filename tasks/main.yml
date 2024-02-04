@@ -199,3 +199,8 @@
   include_tasks: cleanup_backup.yml
   tags:
     - cleanup_backup
+    
+- name: download
+  include_tasks: download.yml
+  tags:
+    - download
