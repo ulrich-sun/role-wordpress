@@ -12,9 +12,13 @@
        # label: "{{ item.path }}"
       #when: item.path | regex_replace('^.{35}(.{2}).*', '\\1') != '23' 
 
-    - name: Obtenir la date d'aujourd'hui soustraite de 2 jours au format YYYY-MM-DD
+    - name: Obtenir la date d'aujourd'hui
       set_fact:
-        two_days_ago: "{{ (ansible_date_time.date | to_datetime('%Y-%m-%d') - 2) | strftime('%Y-%m-%d') }}"
+        current_date: "{{ ansible_date_time.date }}"
+    
+    - name: Soustraire 2 jours de la date d'aujourd'hui
+      set_fact:
+        two_days_ago: "{{ (current_date | to_datetime('%Y-%m-%d') - timedelta(days=2)) | strftime('%Y-%m-%d') }}"
     
     - name: Afficher la date d'aujourd'hui soustraite de 2 jours
       debug:
