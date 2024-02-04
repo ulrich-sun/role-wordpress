@@ -17,17 +17,17 @@
         current_date: "{{ ansible_date_time.date }}"
     
     - name: Soustraire 2 jours de la date d'aujourd'hui
-      set_fact:
-        two_days_ago: "{{ ((current_date | to_datetime('%Y-%m-%d')) - (2 * 86400)) | strftime('%Y-%m-%d') }}"
+      command: date -d "{{ current_date }} - 2 days" +"%Y-%m-%d"
+      register: two_days_ago
     
     - name: Afficher la date d'aujourd'hui soustraite de 2 jours
       debug:
-        var: two_days_ago
+        var: two_days_ago.stdout
     
     - name: Comparer avec la sortie de l'expression régulière
       debug:
         msg: "oui"
-      when: "item.path | regex_replace('^.{24}(.{10}).*', '\\1') == two_days_ago"
+      when: "item.path | regex_replace('^.{24}(.{10}).*', '\\1') == two_days_ago.stdout"
       loop: "{{ backup_files.files }}"
   tags:
     - cleanup_backup
