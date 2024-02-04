@@ -5,11 +5,25 @@
         patterns: "backup_*_EAZYTraining_*_global_db.sql"
       register: backup_files
   
-    - name: Supprimer les anciens fichiers
-      command: "rm {{ item.path }}"
+    #- name: Supprimer les anciens fichiers
+     # command: "rm {{ item.path }}"
+      #loop: "{{ backup_files.files }}"
+      #loop_control:
+       # label: "{{ item.path }}"
+      #when: item.path | regex_replace('^.{35}(.{2}).*', '\\1') != '23' 
+
+    - name: Obtenir la date d'aujourd'hui soustraite de 2 jours au format YYYY-MM-DD
+      set_fact:
+        two_days_ago: "{{ (ansible_date_time.date | to_datetime('%Y-%m-%d') - 2) | strftime('%Y-%m-%d') }}"
+    
+    - name: Afficher la date d'aujourd'hui soustraite de 2 jours
+      debug:
+        var: two_days_ago
+    
+    - name: Comparer avec la sortie de l'expression régulière
+      debug:
+        msg: "oui"
+      when: "item.path | regex_replace('^.{24}(.{10}).*', '\\1') == two_days_ago"
       loop: "{{ backup_files.files }}"
-      loop_control:
-        label: "{{ item.path }}"
-      when: item.path | regex_replace('^.{35}(.{2}).*', '\\1') != '23' 
   tags:
     - cleanup_backup
