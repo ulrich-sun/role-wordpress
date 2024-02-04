@@ -23,6 +23,11 @@
     - name: Afficher la date d'aujourd'hui soustraite de 2 jours
       debug:
         var: two_days_ago.stdout
+
+    - name: sortie
+      debug:
+        var: "item.path | regex_replace('^.{24}(.{10}).*', '\\1') == two_days_ago.stdout"
+      loop: "{{ backup_files.files }}"
     
     - name: Comparer avec la sortie de l'expression régulière
       debug:
