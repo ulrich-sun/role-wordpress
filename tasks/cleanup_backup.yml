@@ -26,7 +26,7 @@
 
     - name: sortie
       debug:
-        var: "item.path | regex_replace('^.{24}(.{10}).*', '\\1') == two_days_ago.stdout"
+        var: "item.path | regex_replace('^.{24}(.{10}).*', '\\1')"
       loop: "{{ backup_files.files }}"
     
     - name: Comparer avec la sortie de l'expression régulière
