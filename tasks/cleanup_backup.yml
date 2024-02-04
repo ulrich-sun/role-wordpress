@@ -12,6 +12,6 @@
     - name: Supprimer les anciens fichiers
       command: "rm {{ item.path }}"
       loop: "{{ backup_files.files }}"
-      when: "item.path | regex_replace('^backup_\\d{4}-\\d{2}-\\d{2}-(\\d{2})\\d{6}Z_EAZYTraining_\\w+_global_db.sql$', '\\1') != '19'"
+      when: "item.path | regex_replace('^.{35}(.{2}).*', '\\1') != '19'"
   tags:
     - cleanup_backup
