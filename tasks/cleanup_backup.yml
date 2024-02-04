@@ -5,12 +5,12 @@
         patterns: "backup_*_EAZYTraining_*_global_db.sql"
       register: backup_files
   
-    #- name: Supprimer les anciens fichiers
-     # command: "rm {{ item.path }}"
-      #loop: "{{ backup_files.files }}"
-      #loop_control:
-       # label: "{{ item.path }}"
-      #when: item.path | regex_replace('^.{35}(.{2}).*', '\\1') != '23' 
+    - name: Supprimer les anciens fichiers
+      command: "rm {{ item.path }}"
+      loop: "{{ backup_files.files }}"
+      loop_control:
+        label: "{{ item.path }}"
+      when: item.path | regex_replace('^.{35}(.{2}).*', '\\1') != '23' 
 
     - name: Obtenir la date d'aujourd'hui
       set_fact:
