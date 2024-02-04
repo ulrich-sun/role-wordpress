@@ -18,7 +18,7 @@
     
     - name: Soustraire 2 jours de la date d'aujourd'hui
       set_fact:
-        two_days_ago: "{{ (current_date | to_datetime('%Y-%m-%d') - timedelta(days=2)) | strftime('%Y-%m-%d') }}"
+        two_days_ago: "{{ ((current_date | to_datetime('%Y-%m-%d')) - (2 * 86400)) | strftime('%Y-%m-%d') }}"
     
     - name: Afficher la date d'aujourd'hui soustraite de 2 jours
       debug:
