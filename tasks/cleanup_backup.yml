@@ -7,7 +7,7 @@
       
     - name: Afficher le résultat de regex_replace
       debug:
-        msg: "{{ 'Non' if item.path | regex_replace('^.{35}0*(\\d{1,2}).*', '\\1') == '23' else 'Oui' }}"
+        msg: "{{ 'Non' if item.path | regex_replace('^.{36}0*(\\d{1,2}).*', '\\1') == '23' else 'Oui' }}"
       loop: "{{ backup_files.files }}"
   
     - name: Supprimer les anciens fichiers
