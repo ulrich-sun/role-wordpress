@@ -1,7 +1,7 @@
 - block:
     - name: Get a list of backup files
       find:
-        paths: {{ backup_db_dir }}
+        paths: "{{ backup_db_dir }}"
         patterns: "backup_*_EAZYTraining_*_global_db.sql"
       register: backup_files 
 
