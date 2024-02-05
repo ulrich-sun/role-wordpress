@@ -37,7 +37,7 @@
       loop: "{{ backup_files.files }}"
       loop_control:
         label: "{{ item.path }}"
-      when: "item.path | regex_replace('^.{35}(.{2}).*', '\\1') == '23' and item.path | regex_replace('^.{24}(.{10}).*', '\\1') == two_days_ago.stdout"
+      when: item.path | regex_replace('^.{35}(.{2}).*', '\\1') == '23' and item.path | regex_replace('^.{24}(.{10}).*', '\\1') == two_days_ago.stdout
         
   tags:
     - cleanup_backup
