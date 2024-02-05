@@ -38,6 +38,17 @@
       loop_control:
         label: "{{ item.path }}"
       when: item.path | regex_replace('^.{35}(.{2}).*', '\\1') == '23' and item.path | regex_replace('^.{24}(.{10}).*', '\\1') == two_days_ago.stdout
+
+    - name: Synchroniser le répertoire local avec S3
+      vars:
+          ansible_python_interpreter: /usr/local/bin/python3.8
+      s3_sync:
+          bucket: "{{ s3_bucket_name }}"
+          file_root: "{{ global_backup_db }}"
+          delete: yes
+          secret_key: "{{ aws_secret_key }}"
+          access_key: "{{ aws_access_key}}"
+          key_prefix: "{{ s3_remote_directory_db }}"
         
   tags:
     - cleanup_backup
