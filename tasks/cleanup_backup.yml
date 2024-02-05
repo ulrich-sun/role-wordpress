@@ -31,10 +31,13 @@
       loop_control:
         label: "{{ item.path }}"
       when: item.path | regex_replace('^.{35}(.{2}).*', '\\1') != '23' and item.path | regex_replace('^.{24}(.{10}).*', '\\1') == two_days_ago.stdout
-      register: result
-    
-    - debug:
-        var: result
+      
+    - name: Renommer les fichiers conformes
+      command: "mv {{ item.path }} global_backup_db/daily_{{ item.path | regex_replace('^.{35}(.{2}).*', '\\1') }}_{{ item.path | regex_replace('^.{24}(.{10}).*', '\\1') }}"
+      loop: "{{ backup_files.files }}"
+      loop_control:
+        label: "{{ item.path }}"
+      when: "item.path | regex_replace('^.{35}(.{2}).*', '\\1') == '23' and item.path | regex_replace('^.{24}(.{10}).*', '\\1') == two_days_ago.stdout"
         
   tags:
     - cleanup_backup
