@@ -13,15 +13,15 @@
         backup_file_db: "backup_{{ timestamp }}_{{ site_name }}_{{ unique_id }}_global_db.sql"
 
     - name: Backup database
-      command: docker exec {{ wp_db_name }} sh -c "MYSQL_PWD='{{ db_root_psw }}' mysqldump -u root {{ wp_db_name }} > {{ wp_dir }}/{{ backup_file_db }}"
+      command: docker exec {{ db_container_name }} sh -c "MYSQL_PWD='{{ db_root_psw }}' mysqldump -u root {{ db_container_name }} > {{ wp_dir }}/{{ backup_file_db }}"
 
     - name: Copy file from container to host
-      command: docker cp "{{ wp_db_name }}:{{ wp_dir }}/{{ backup_file_db }}" "{{ compose_project_dir }}/{{ backup_db_dir }}"
+      command: docker cp "{{ db_container_name }}:{{ wp_dir }}/{{ backup_file_db }}" "{{ compose_project_dir }}/{{ backup_db_dir }}"
       notify:
         - s3_global_db_backup_handler
 
     - name: Remove file from mysql container
-      command: docker exec {{ wp_db_name }} rm -rf {{ wp_dir }}/{{ backup_file_db }}
+      command: docker exec {{ db_container_name }} rm -rf {{ wp_dir }}/{{ backup_file_db }}
 
   tags:
     - global_backup_db
