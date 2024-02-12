@@ -4,10 +4,10 @@
       command: docker cp {{ restore_db_name.restore_files_path }}/{{ restore_db_name.restore_pattern }} db:{{ restore_db_name.restore_pattern }}
 
     - name: Restaurer le fichier SQL dans la base de données MySQL
-      command: docker exec db sh -c "exec mysql -u{{ wp_db_user }} -p{{ wp_db_psw }} {{ wp_db_name }} < {{ restore_db_name.restore_pattern }}"
+      command: docker exec {{ wp_db_name }} sh -c "exec mysql -u{{ wp_db_user }} -p{{ wp_db_psw }} {{ wp_db_name }} < {{ restore_db_name.restore_pattern }}"
 
     - name: Remove file from wordpress container
-      command: docker exec db rm {{ restore_db_name.restore_pattern }}
+      command: docker exec {{ wp_db_name }} rm {{ restore_db_name.restore_pattern }}
 
   tags:
     - global_restore_db
