@@ -4,7 +4,8 @@
       pip:
         name: botocore,boto3
         executable: /usr/local/bin/pip3.8
-        
+      vars:
+          ansible_python_interpreter: /usr/local/bin/python3.8    
     - name: Synchroniser le répertoire local avec S3
       vars:
           ansible_python_interpreter: /usr/local/bin/python3.8
