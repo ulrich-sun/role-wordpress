@@ -13,10 +13,10 @@
           region: "{{ region }}"
           
     - name: Extraire le fichier ZIP du plugin 
-      command: sudo unzip -o {{ s3_specific_plugin_name_restore.restore_files_path }}/{{ s3_specific_plugin_name_restore.restore_pattern }} -d unzip_folder/
+      command: sh -c " unzip -o {{ s3_specific_plugin_name_restore.restore_files_path }}/{{ s3_specific_plugin_name_restore.restore_pattern }} -d unzip_folder/"
 
     - name: Copier les fichiers extraits depuis unzip_folder au reperoire eazytraining
-      command: sudo rsync -a unzip_folder/ eazytraining/wp-content/plugins/
+      command: sh -c " rsync -a unzip_folder/ eazytraining/wp-content/plugins/"
 
     - name: Remove backup file from the WordPress
       command: sh -c "sudo rm -rf unzip_folder/*"
