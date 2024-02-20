@@ -21,7 +21,7 @@
       command: unzip -o "{{ s3_restore_themes_name.restore_files_path }}/{{ s3_filename_themes }}/{{ s3_restore_themes_name.restore_pattern }}" -d "unzip_folder/"
 
     - name: Copier les fichiers extraits depuis unzip_folder au reperoire eazytraining
-      command: sudo rsync -a --delete unzip_folder/ eazytraining/wp-content/themes/
+      command: sudo rsync -a --delete unzip_folder/ {{ wordpress_site }}/wp-content/themes/
 
     - name: Remove backup file from the WordPress 
       command: sh -c "sudo rm -rf unzip_folder/*" 
