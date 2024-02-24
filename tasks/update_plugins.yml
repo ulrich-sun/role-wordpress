@@ -10,10 +10,18 @@
         
     - name: "Flush handlers backup and activate rights of plugins"
       meta: flush_handlers
-      
+
+    - name: Vérifier les permissions d'écriture sur le dossier des plugins
+      stat:
+        path: "{{ wordpress_directory }}/wp-content/plugins"
+      register: plugin_directory_status
+    
     - name: Mettre à jour le plugin
       command: /usr/local/bin/wp plugin update "{{ plugin_to_update.plugin_name }}" --version="{{ plugin_to_update.new_version }}" --allow-root --ssh=docker:{{ wordpress_container_name }}
       register: plugin_update_output
+      when:
+        - plugin_to_update.plugin_name is defined and plugin_to_update.plugin_name | length > 0
+        - "plugin_directory_status.stat.mode == '0775'"
       notify:
         - deactivate_plugin_update
         - activate_plugin_malcare-security_update
