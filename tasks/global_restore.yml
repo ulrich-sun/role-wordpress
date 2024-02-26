@@ -8,6 +8,8 @@
 
     - name: Remove files from unzip folder
       command: sudo rm -r unzip_folder/{{ wordpress_site }}/
+      notify:
+        - global_restore_db
 
   tags:
     - global_restore
