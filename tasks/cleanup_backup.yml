@@ -1,5 +1,6 @@
 - block:
     - name: Get a list of backup files
+      command: sh -c "cd global_backup_db"
       find:
         paths: "{{ backup_db_dir }}"
         patterns: "backup_*_EAZYTraining_*_global_db.sql"
