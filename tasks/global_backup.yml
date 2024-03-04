@@ -14,7 +14,7 @@
         backup_file_name: "backup_{{ timestamp }}_{{ site_name }}_{{ unique_id }}_global.zip"
 
     - name: Backup entire WordPress site
-      command: sh -c "sudo zip -r {{ compose_project_dir }}/global_backup_site/{{ backup_file_name }} {{ wordpress_site }} --exclude */uploads/*"
+      command: cd {{ wordpress_site }} &&  zip -r {{ compose_project_dir }}/global_backup_site/{{ backup_file_name }} . -x "*/uploads/*"
       notify:
         - s3_backup_site_handler
         - global_backup_db
