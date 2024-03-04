@@ -17,13 +17,13 @@
      # debug:
       #  var: two_days_ago.stdout
     
-    #- name: Compare with regular expression output
-     # debug:
-      #  msg: "oui"
-      #when: item.path | regex_replace('^.{24}(.{10}).*', '\\1') == two_days_ago.stdout
-      #loop: "{{ backup_files.files }}"
-      #loop_control:
-      #  label: "{{ item.path }}"
+    - name: Compare with regular expression output
+      debug:
+        msg: "oui"
+      when: item.path | regex_replace('^.{66}(.{10}).*', '\\1') == two_days_ago.stdout
+      loop: "{{ backup_files.files }}"
+      loop_control:
+        label: "{{ item.path }}"
 
     - name: Delete old files
       command: "rm {{ item.path }}"
