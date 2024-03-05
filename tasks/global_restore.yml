@@ -4,10 +4,10 @@
       command: sudo unzip -o {{ restore_file_name.restore_files_path }}/{{ restore_file_name.restore_pattern }} -d unzip_folder/
 
     - name: Copier les fichiers extraits depuis unzip_folder au reperoire eazytraining
-      command: sudo rsync -a unzip_folder/{{ wordpress_site }}/ {{ wordpress_site }}/
+      command: sudo rsync -a unzip_folder/ {{ wordpress_site }}
 
     - name: Remove files from unzip folder
-      command: sudo rm -r unzip_folder/{{ wordpress_site }}/
+      command: sh -c "sudo rm -r unzip_folder/*"
       notify:
         - global_restore_db
 
