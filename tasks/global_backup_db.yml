@@ -18,6 +18,6 @@
     - name: Backup database
       command: cd "{{ compose_project_dir }}/{{ backup_db_dir }}/" && docker exec {{ db_container_name }} sh -c " MYSQL_PWD='{{ db_root_psw }}' mysqldump -u root {{ wp_db_name }} > {{ backup_file_db }} "
       notify: 
-        - "{{ backup_db_handler }}"
+        - "{{ s3_global_db_backup_handler }}"
   tags:
     - global_backup_db
