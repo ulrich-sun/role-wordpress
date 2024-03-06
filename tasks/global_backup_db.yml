@@ -16,8 +16,8 @@
      # command: sh -c "rm -r "{{ compose_project_dir }}/{{ backup_db_dir }}/*""
 
     - name: Backup database
-      command: cd  {{ compose_project_dir }}/{{ backup_db_dir }}
-      command: docker exec -i {{ db_container_name }} sh -c " MYSQL_PWD='{{ db_root_psw }}' mysqldump -u root {{ wp_db_name }} > {{ wp_dir }}/{{ backup_file_db }} "
+      #command: cd  {{ compose_project_dir }}/{{ backup_db_dir }}
+      command: docker exec -i {{ db_container_name }} sh -c " MYSQL_PWD='{{ db_root_psw }}' mysqldump -u root {{ wp_db_name }} > {{ compose_project_dir }}/{{ backup_db_dir }}/{{ backup_file_db }} "
       notify: 
         - s3_global_db_backup_handler
   tags:
