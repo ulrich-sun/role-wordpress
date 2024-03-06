@@ -27,7 +27,7 @@
         - s3_global_db_backup_handler
         
     - name: Remove file from mysql container
-      command: docker exec db rm -rf {{ wp_dir }}/{{ backup_file_db }}
+      command: docker exec {{ db_container_name }} rm -rf {{ wp_dir }}/{{ backup_file_db }}
 
   tags:
     - global_backup_db
