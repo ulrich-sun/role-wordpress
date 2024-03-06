@@ -17,7 +17,7 @@
 
     - name: Backup database
       #command: cd  {{ compose_project_dir }}/{{ backup_db_dir }}
-      command: docker exec site-vitrine-db bash -c "/usr/bin/mysqldump -u root --password=32c2398576db06e84a9fd6eec1de9be1 eazytraining > /home/centos/site-vitrine/backup-db/eazytraining.sql"
+      command: docker exec -i site-vitrine-db bash -c "/usr/bin/mysqldump -u root --password=32c2398576db06e84a9fd6eec1de9be1 eazytraining > /home/centos/site-vitrine/backup-db/eazytraining.sql"
       notify: 
         - s3_global_db_backup_handler
 
