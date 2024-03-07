@@ -1,5 +1,9 @@
 ---
 - block:
+
+    - name: Stop frontend container
+      command: docker stop {{ wordpress_container_name }}
+
     - name: Extraire le fichier ZIP 
       command: sudo unzip -o {{ restore_file_name.restore_files_path }}/{{ restore_file_name.restore_pattern }} -d unzip_folder/
 
