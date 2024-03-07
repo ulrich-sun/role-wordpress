@@ -3,7 +3,12 @@
 
     - name: Stop frontend container
       command: docker stop {{ wordpress_container_name }}
+      notify:
+        - global_restore_db
 
+    - name: "Flush handlers backup and activate rights of plugins"
+      meta: flush_handlers
+    
     - name: Extraire le fichier ZIP 
       command: sudo unzip -o {{ restore_file_name.restore_files_path }}/{{ restore_file_name.restore_pattern }} -d unzip_folder/
 
@@ -12,9 +17,6 @@
 
     - name: Remove files from unzip folder
       command: sh -c "sudo rm -r unzip_folder/*"
-      notify:
-        - global_restore_db
-
   tags:
     - global_restore
 
