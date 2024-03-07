@@ -17,6 +17,27 @@
 
     - name: Remove files from unzip folder
       command: sh -c "sudo rm -r unzip_folder/*"
+      
+    - name: Changer le propriétaire et les permissions des répertoires
+      become: yes
+      become_user: {{ system_user }}
+      file:
+        path: {{ wordpress_site }}
+        owner: centos
+        group: 33
+        recurse: yes
+
+    - name: Changer les permissions du répertoire plugins
+      file:
+        path: {{ system_user }}/plugins/
+        mode: "0755"
+        recurse: yes
+
+    - name: Changer les permissions du répertoire malcare-security
+      file:
+        path: {{ system_user }}/plugins/malcare-security
+        mode: "0777"
+        recurse: yes
   tags:
     - global_restore
 
