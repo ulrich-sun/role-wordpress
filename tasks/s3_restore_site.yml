@@ -14,7 +14,7 @@
     - name: Stop frontend container
       command: docker stop {{ wordpress_container_name }}
       notify:
-        - global_restore_db
+        - restore_db_s3 
 
     - name: "Flush handlers backup and activate rights of plugins"
       meta: flush_handlers
