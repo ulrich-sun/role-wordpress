@@ -10,7 +10,7 @@
       ignore_errors: true
     
     - name: Démarrer le conteneur Docker site-vitrine-db
-      shell: cd {{ site_vitrine_directory }} && docker-compose up -d {{ db_container_name }}
+      shell: cd {{ site_vitrine_directory }} && docker compose up -d {{ db_container_name }}
       
     - name: Copier le fichier de sauvegarde vers le conteneur
       command: docker cp {{ restore_db_name.restore_files_path }}/{{ restore_db_name.restore_pattern }} {{ db_container_name }}:{{ restore_db_name.restore_pattern }}
