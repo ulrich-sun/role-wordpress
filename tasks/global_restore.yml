@@ -28,7 +28,7 @@
         recurse: yes
 
     - name: Changer les permissions du répertoire plugins
-    file:
+      file:
         path: "{{ wordpress_site }}/wp-content/plugins/"
         mode: "0775"
         recurse: yes
