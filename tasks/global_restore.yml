@@ -38,6 +38,10 @@
         path: {{ system_user }}/plugins/malcare-security
         mode: "0777"
         recurse: yes
+
+    - name: Start frontend container
+      command: docker start {{ wordpress_container_name }}
+      
   tags:
     - global_restore
 
