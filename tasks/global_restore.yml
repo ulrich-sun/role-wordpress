@@ -29,13 +29,13 @@
 
     - name: Changer les permissions du répertoire plugins
       file:
-        path: {{ system_user }}/plugins/
+        path: {{ wordpress_site }}/plugins/
         mode: "0755"
         recurse: yes
 
     - name: Changer les permissions du répertoire malcare-security
       file:
-        path: {{ system_user }}/plugins/malcare-security
+        path: {{ wordpress_site }}/plugins/malcare-security
         mode: "0777"
         recurse: yes
 
