@@ -13,7 +13,7 @@
       shell: cd {{ site_vitrine_directory }} && docker-compose up -d {{ db_container_name }}
       
     - name: Copier le fichier de sauvegarde vers le conteneur
-      command: docker cp {{ restore_db_name.restore_files_path }}/{{ restore_db_name.restore_pattern }} site-vitrine-db:{{ restore_db_name.restore_pattern }}
+      command: docker cp {{ restore_db_name.restore_files_path }}/{{ restore_db_name.restore_pattern }} {{ db_container_name }}:{{ restore_db_name.restore_pattern }}
 
     - name: Restaurer le fichier SQL dans la base de données MySQL
       command: docker exec -i {{ db_container_name }} sh -c "exec mysql -u{{ wp_db_user }} -p{{ wp_db_psw }} {{ wp_db_name }}" < "{{ restore_db_name.restore_pattern }}"
