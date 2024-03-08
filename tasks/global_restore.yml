@@ -20,22 +20,23 @@
       
     - name: Changer le propriétaire et les permissions des répertoires
       become: yes
-      become_user: {{ system_user }}
+      become_user: "{{ system_user }}"
       file:
-        path: {{ wordpress_site }}
+        path: "{{ wordpress_site }}"
         owner: centos
         group: 33
         recurse: yes
 
     - name: Changer les permissions du répertoire plugins
-      file:
-        path: {{ wordpress_site }}/plugins/
-        mode: "0755"
+    file:
+        path: "{{ wordpress_site }}/wp-content/plugins/"
+        mode: "0775"
         recurse: yes
+
 
     - name: Changer les permissions du répertoire malcare-security
       file:
-        path: {{ wordpress_site }}/plugins/malcare-security
+        path: "{{ wordpress_site }}/plugins/malcare-security"
         mode: "0777"
         recurse: yes
 
