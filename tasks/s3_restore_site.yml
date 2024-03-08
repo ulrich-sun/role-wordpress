@@ -11,12 +11,13 @@
           secret_key: "{{ aws_secret_key }}"
           access_key: "{{ aws_access_key}}"
           region: "{{ region }}"
+          
     - name: Stop frontend container
       command: docker stop {{ wordpress_container_name }}
       notify:
         - restore_db_s3 
 
-    - name: "Flush handlers backup and activate rights of plugins"
+    - name: "Flush handlers restore site from s3 bucket "
       meta: flush_handlers
     
     - name: Extraire le fichier ZIP 
