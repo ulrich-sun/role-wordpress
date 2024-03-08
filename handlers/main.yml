@@ -60,7 +60,7 @@
   include_tasks: tasks/global_restore_db.yml
 
 - name: restore_db_s3
-  include_tasks: tasks/s3_restore_site.yml
+  include_tasks: tasks/s3_global_db_restore.yml
   
 - name: global_backup
   include_tasks: tasks/global_backup.yml
