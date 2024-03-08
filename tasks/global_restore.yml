@@ -19,8 +19,8 @@
       command: sh -c "sudo rm -r unzip_folder/*"
       
     - name: Changer le propriétaire et les permissions des répertoires
-      become: yes
-      become_user: "{{ system_user }}"
+      #become: yes
+      #become_user: "{{ system_user }}"
       file:
         path: "{{ wordpress_site }}"
         owner: centos
