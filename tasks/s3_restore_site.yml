@@ -11,15 +11,47 @@
           secret_key: "{{ aws_secret_key }}"
           access_key: "{{ aws_access_key}}"
           region: "{{ region }}"
+    - name: Stop frontend container
+      command: docker stop {{ wordpress_container_name }}
+      notify:
+        - global_restore_db
 
+    - name: "Flush handlers backup and activate rights of plugins"
+      meta: flush_handlers
+    
     - name: Extraire le fichier ZIP 
-      command: sudo unzip -o {{ s3_restore_file_name.restore_files_path }}/{{ s3_restore_file_name.restore_pattern }} -d unzip_folder/
+      command: sudo unzip -o {{ restore_file_name.restore_files_path }}/{{ restore_file_name.restore_pattern }} -d unzip_folder/
 
     - name: Copier les fichiers extraits depuis unzip_folder au reperoire eazytraining
-      command: sudo rsync -a --delete unzip_folder/eazytraining/ eazytraining/
+      command: sh -c "sudo cp -r unzip_folder/* {{ wordpress_site }}"
 
     - name: Remove files from unzip folder
-      command: sudo rm -r unzip_folder/eazytraining/       
+      command: sh -c "sudo rm -r unzip_folder/*"
+      
+    - name: Changer le propriétaire et les permissions des répertoires
+      #become: yes
+      #become_user: "{{ system_user }}"
+      file:
+        path: "{{ wordpress_site }}"
+        owner: centos
+        group: 33
+        recurse: yes
+
+    - name: Changer les permissions du répertoire plugins
+      file:
+        path: "{{ wordpress_site }}/wp-content/plugins/"
+        mode: "0775"
+        recurse: yes
+
+
+    - name: Changer les permissions du répertoire malcare-security
+      file:
+        path: "{{ wordpress_site }}/plugins/malcare-security"
+        mode: "0777"
+        recurse: yes
+
+    - name: Start frontend container
+      command: docker start {{ wordpress_container_name }}      
   tags:
     - restore_site_s3
 
