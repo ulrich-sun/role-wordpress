@@ -15,6 +15,7 @@
     recurse: yes
     owner: centos
     group: tape
+  command: ls -la "{{ wordpress_site }}/wp-content/plugins/"
     
 # Change permissions for plugins directory to R+W+X for owner, R+X for group and others
 - name: deactivate_plugin_update
