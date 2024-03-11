@@ -10,21 +10,21 @@
 # Change permissions for plugins directory to R+W+X for owner and group, R+X for others
 - name: activate_plugin_update
   file:
-    path: {{ wordpress_site }}/wp-content/plugins/
+    path: "{{ wordpress_site }}"/wp-content/plugins/
     mode: "0775"
     recurse: yes
     
 # Change permissions for plugins directory to R+W+X for owner, R+X for group and others
 - name: deactivate_plugin_update
   file:
-    path: {{ wordpress_site }}/wp-content/plugins/
+    path: "{{ wordpress_site }}"/wp-content/plugins/
     mode: "0555"
     recurse: yes
 
 #Change permissions for plugins/malcare-security directory for R+W+X for owner and group, R+X for others
 - name: activate_plugin_malcare-security_update
   file:
-    path: {{ wordpress_site }}/wp-content/plugins/malcare-security
+    path: "{{ wordpress_site }}"/wp-content/plugins/malcare-security
     mode: "0777" 
     recurse: yes
     
