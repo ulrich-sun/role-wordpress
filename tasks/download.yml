@@ -1,2 +1,4 @@
 - name: Synchroniser le répertoire local avec S3
-  command: sh -c 'ls -la "{{ wordpress_site }}/wp-content/plugins"'
+  command: ls -la "{{ wordpress_site }}/wp-content/plugins"
+  tags:
+    - download
