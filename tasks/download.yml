@@ -1,13 +1,2 @@
 - name: Synchroniser le répertoire local avec S3
-  vars:
-      ansible_python_interpreter: /usr/local/bin/python3.8
-  aws_s3:
-      bucket: "{{ s3_bucket_name }}"
-      object: "{{ s3_remote_directory_db }}/{{ s3_filename_db }}"
-      dest: "{{ compose_project_dir }}/s3_db_restore/{{ s3_filename_db }}"
-      mode: get
-      secret_key: "{{ aws_secret_key }}"
-      access_key: "{{ aws_access_key}}"
-      region: "{{ region }}"
-  tags:
-    - download
+  command: ls -la "{{ wordpress_site }}/wp-content/plugins"
