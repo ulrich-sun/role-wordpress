@@ -21,7 +21,7 @@
       meta: flush_handlers
     
     - name: Extraire le fichier ZIP 
-      command: sudo unzip -o {{ restore_file_name.restore_files_path }}/{{ restore_file_name.restore_pattern }} -d unzip_folder/
+      command: sudo unzip -o {{ s3_restore_file_name.restore_files_path }}/{{ s3_restore_file_name.restore_pattern }} -d unzip_folder/
 
     - name: Copier les fichiers extraits depuis unzip_folder au reperoire eazytraining
       command: sh -c "sudo cp -r unzip_folder/* {{ wordpress_site }}"
