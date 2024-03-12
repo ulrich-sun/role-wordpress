@@ -13,7 +13,7 @@
           region: "{{ region }}"
           
     - name: Supprimer le conteneur Docker site-vitrine-db s'il existe
-      shell: docker rm -f {{ db_container_name }}
+      shell: docker stop {{ db_container_name }} && docker rm  {{ db_container_name }}
       ignore_errors: true
     
     - name: Supprimer le volume Docker site-vitrine-db-data s'il existe
