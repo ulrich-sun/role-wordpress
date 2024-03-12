@@ -24,7 +24,7 @@
       shell: cd {{ site_vitrine_directory }} && /usr/local/bin/docker-compose --compatibility up -d {{ db_container_name }}
       
     - name: Copier le fichier de sauvegarde vers le conteneur
-      command: docker cp {{ restore_db_name.restore_files_path }}/{{ restore_db_name.restore_pattern }} {{ db_container_name }}:{{ restore_db_name.restore_pattern }}
+      command: docker cp {{ s3_restore_db_name.restore_files_path }}/{{ s3_restore_db_name.restore_pattern }} {{ db_container_name }}:{{ s3_restore_db_name.restore_pattern }}
 
     - name: patienter avant de continuer
       command: sleep 4
