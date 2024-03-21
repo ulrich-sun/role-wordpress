@@ -1,0 +1,44 @@
+---
+- name: Plugins backup
+  tags:
+    - plugins_backup
+  block:
+    - name: Set variables
+      ansible.builtin.set_fact:
+        container_name: "{{ wordpress_container_name }}"
+        wp_dir: "{{ wordpress_site }}/wp-content/plugins"
+        site_name: "EAZYTraining"
+        timestamp: "{{ ansible_date_time.iso8601 | regex_replace('[-T:.]', '') | regex_replace('([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{6})', '\\1-\\2-\\3-\\4') }}"
+        unique_id: "{{ lookup('password', '/dev/null length=10 chars=ascii_letters,digits') }}"
+
+    - name: List WordPress plugins
+      ansible.builtin.command: sh -c "cd {{ wp_dir }} && find . -maxdepth 1 -mindepth 1 -type d -exec basename {} \;"
+      register: plugins_list_result
+      changed_when: false
+
+    - name: Create backup directory if it doesn't exist
+      ansible.builtin.file:
+        path: "{{ global_backup_plugins }}/backup_{{ timestamp }}_{{ site_name }}_{{ unique_id }}_plugins"
+        state: directory
+        owner: "{{ system_user }}"  # Specify appropriate owner
+        group: tape    # Specify appropriate group
+        mode: '0755'   # Specify appropriate permissions
+
+    - name: Get plugin version using wp-cli
+      ansible.builtin.command: "/usr/local/bin/wp plugin get {{ item }} --field=version --allow-root --ssh=docker:{{ wordpress_container_name }}"
+      register: plugin_version_result
+      changed_when: False
+      with_items: "{{ plugins_list_result.stdout_lines }}"
+      loop_control:
+        loop_var: item
+
+    - name: Backup WordPress plugins
+      ansible.builtin.command: "sh -c 'cd {{ wp_dir }} && sudo zip -r {{ global_backup_plugins }}/backup_{{ timestamp }}_{{ site_name }}_{{ unique_id }}_plugins/backup_{{ timestamp }}_{{ site_name }}_{{ unique_id }}_{{ plugin.0.item}}_{{ plugin.0.stdout }}.zip {{ plugin.1 }}'"
+      with_together:
+        - "{{ plugin_version_result.results }}"
+        - "{{ plugins_list_result.stdout_lines }}"
+      loop_control:
+        loop_var: plugin
+      notify:
+        - S3_global_plugins_backup_handler
+      changed_when: false  # Set changed_when to false to indicate no change when nothing needs doing

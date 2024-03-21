@@ -1,0 +1,8 @@
+- name: Synchroniser le répertoire local avec S3
+  vars:
+    s3_bucket_name: "backup-aurelie"
+    local_directory: "{{ compose_project_dir }}/backup"
+  s3_sync:
+    bucket: "{{ s3_bucket_name }}"
+    upload_dir: "{{ local_directory }}"
+    delete: true

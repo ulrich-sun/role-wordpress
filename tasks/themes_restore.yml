@@ -1,0 +1,13 @@
+---
+- name: Restore theme in local
+  tags:
+    - themes_restore
+  block:
+    - name: Extraire le fichier ZIP
+      ansible.command: sudo unzip -o {{ restore_themes_name.restore_files_path }}/{{ restore_themes_name.restore_pattern }} -d unzip_folder/
+
+    - name: Copier les fichiers extraits depuis unzip_folder au reperoire eazytraining
+      ansible.command: sudo rsync -a --delete unzip_folder/ {{ wordpress_site }}/wp-content/themes/
+
+    - name: Remove backup file from the WordPress
+      ansible.command: sh -c "sudo rm -rf unzip_folder/*"
