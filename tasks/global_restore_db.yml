@@ -2,7 +2,7 @@
 - block:
 
     - name: Supprimer le conteneur Docker site-vitrine-db s'il existe
-      shell: docker rm -f {{ db_container_name }}
+      shell: docker stop {{ db_container_name }} && docker rm  {{ db_container_name }}
       ignore_errors: true
     
     - name: Supprimer le volume Docker site-vitrine-db-data s'il existe
@@ -10,13 +10,13 @@
       ignore_errors: true
     
     - name: Démarrer le conteneur Docker site-vitrine-db
-      shell: cd {{ site_vitrine_directory }} && docker compose up -d {{ db_container_name }}
+      shell: cd {{ site_vitrine_directory }} && /usr/local/bin/docker-compose --compatibility up -d {{ db_container_name }}
       
     - name: Copier le fichier de sauvegarde vers le conteneur
       command: docker cp {{ restore_db_name.restore_files_path }}/{{ restore_db_name.restore_pattern }} {{ db_container_name }}:{{ restore_db_name.restore_pattern }}
 
     - name: patienter avant de continuer
-      command: sleep 1
+      command: sleep 4
 
     - name: Restaurer le fichier SQL dans la base de données MySQL
       command: docker exec -i {{ db_container_name }} sh -c "exec mysql  -u{{ wp_db_user }} -p{{ wp_db_psw }} {{ wp_db_name }} < {{ restore_db_name.restore_pattern }}"
