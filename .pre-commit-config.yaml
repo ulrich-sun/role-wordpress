@@ -9,11 +9,45 @@ repos:
       - id: end-of-file-fixer
       - id: check-yaml
       - id: check-added-large-files
+
+      - id: detect-aws-credentials
+        name: detect-aws-credentials
+        entry: detect-secrets
+        types: [file]
+        language: python
+        additional_dependencies: [detect-secrets==1.4.0]
+        files: .aws/credentials
+
+      - id: detect-private-key
+        name: detect-private-key
+        entry: detect-secrets
+        types: [file]
+        language: python
+        additional_dependencies: [detect-secrets==1.4.0]
+        files: .ssh/.*
+
+      - id: check-merge-conflict
+        name: check-merge-conflict
+
   - repo: https://github.com/ansible/ansible-lint
-    rev: 'v24.2.0' # Remplacez par la version actuelle d'ansible-lint
+    rev: 'v24.2.1' # Remplacez par la version actuelle d'ansible-lint
     hooks:
       - id: ansible-lint
+
   - repo: https://github.com/adrienverge/yamllint.git
     rev: 'v1.35.1' # Remplacez par la version actuelle de yamllint
     hooks:
       - id: yamllint
+
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        args: ['--baseline', '.secrets.baseline']
+        exclude: package.lock.json
+
+ # - repo: https://github.com/owasp-dep-scan/dep-scan
+  #  rev: v5.2.12
+   # hooks:
+    #  - id: dep-scan
+        #args: ['--cache']  # Télécharge la base de données complète des vulnérabilités pour le scan initial avec dep-scan --cache
