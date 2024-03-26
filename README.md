@@ -664,7 +664,7 @@ These hooks can be used to detect potential security issues in the source code a
 	- the full set of options for the configuration are listed in documentation
 	- other supported hooks are available in documentation
         - run `pre-commit install` to set up the git hook scripts
-        - it's usually a good idea to run the hooks against all of the files when adding new hooks (usually pre-commit will only run on the changed files during git hooks) with command: `pre-commit run --all-files`
+        - it's usually a good idea to run the hooks against all of the files when adding new hooks (usually pre-commit will only run on the changed files during git hooks) with command: `git add .` , `pre-commit autoupdate` and `pre-commit run --all-files`
         - Then commit and push your code
       
 ## Version 6
