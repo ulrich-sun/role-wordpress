@@ -617,7 +617,56 @@ b. Restore specific theme from s3 bucket
 
 - molecule integration
 - Pre-commit hooks integration
+  
+Pre-commit hooks are an effective way to automate code verification processes and ensure the quality, security, and consistency of a software project's source code.
 
+Here are some common security testing hooks you can use in a pre-commit pipeline:
+
+- detect-secrets: Identifies sensitive secrets in the source code.
+- detect-aws-credentials: Detects exposed AWS credentials in the code.
+- detect-private-key: Searches for exposed private keys in the code.
+- check-vuln-dependencies: Analyzes project dependencies for known vulnerabilities.
+- dep-scan: Performs static code security analysis to identify known vulnerabilities.
+- trufflehog: Searches for credentials and other secrets in the source code.
+- bandit: Static analysis of Python code for security vulnerabilities.
+- eslint-plugin-security: ESLint plugin that detects security vulnerabilities in JavaScript code.
+- brakeman: Static security analysis tool for Ruby on Rails applications.
+
+These hooks can be used to detect potential security issues in the source code and prevent security breaches.
+
+**NB: In the .pre-commit-hooks.yaml file, we have implemented the detect-secrets, detect-aws-credentials, detect-private-key hooks regarding security**
+
+1. For the detect-secrets hook, we need to ensure the following:
+
+   - Check detect-secrets installation: Make sure you have correctly installed the detect-secrets tool in your environment. You can use the following command to install the tool:
+     `python3 -m pip install detect-secrets`
+
+   - Check execution path: Ensure that the execution path to the detect-secrets executable is included in your PATH environment variable. You can check the execution path using the following command:
+     `which detect-secrets`
+
+   - Check permissions: Ensure you have the necessary permissions to execute detect-secrets. If using sudo, make sure the execution path is correct.
+     Try running the command with the full path: If you know the full path to detect-secrets, try running it directly with the full path:
+     `detect-secrets scan > .secrets.baseline`
+
+3. To execute our pre-commit hooks defined in .pre-commit-hooks.yaml follow the steps below:
+
+
+    Before you can run hooks, you need to have the pre-commit package manager installed.
+
+	Using pip:
+	
+	`pip3 install pre-commit`
+
+	`pre-commit --version` should show you what version you're using
+
+	- create a file named .pre-commit-config.yaml
+	- you can generate a very basic configuration using pre-commit sample-config
+	- the full set of options for the configuration are listed in documentation
+	- other supported hooks are available in documentation
+        - run `pre-commit install` to set up the git hook scripts
+        - it's usually a good idea to run the hooks against all of the files when adding new hooks (usually pre-commit will only run on the changed files during git hooks) with command: `pre-commit run --all-files`
+        - Then commit and push your code
+      
 ## Version 6
 
 - galaxy role release
