@@ -13,8 +13,8 @@
       loop: "{{ plugins_to_install }}"
       when:
         - plugins_to_install is defined and plugins_to_install | length > 0
-        - plugin_directory_status.stat.mode == 0775
-      #changed_when: false
+        - "plugin_directory_status.stat.mode == '0775'"
+      changed_when: false
 
 - name: Activation des plugins
   ansible.builtin.command: /usr/local/bin/wp plugin activate "{{ item }}" --allow-root --ssh=docker:{{ wordpress_container_name }}
