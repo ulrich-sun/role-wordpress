@@ -12,7 +12,7 @@ wp_version: 5.3.2
 wordpress_webroot: /var/www/html
 wordpress_site_url: http://192.168.99.11
 
-wordpress_directory: "/home/{{ system_user }}/eazytraining"
+wordpress_directory: "/home/{{ system_user }}/site-vitrine/eazytraining"
 
 wordpress_title: wordpress
 wordpress_admin_user: Aurelie
