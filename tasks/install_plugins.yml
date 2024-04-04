@@ -3,7 +3,7 @@
     
     - name: Vérifier les permissions d'écriture sur le dossier des plugins
       stat:
-        path: "{{ wordpress_directory }}/wp-content/plugins"
+        path: "{{  wordpress_site }}/wp-content/plugins"
       register: plugin_directory_status
     
     - name: Installation des plugins
