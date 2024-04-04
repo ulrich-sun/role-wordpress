@@ -5,7 +5,8 @@
   block:
     - name: Vérifier les permissions d'écriture sur le dossier des plugins
       ansible.builtin.stat:
-        path: "{{ wordpress_site }}/wp-content/plugins"
+        #path: "{{ wordpress_site }}/wp-content/plugins"
+        path: /home/cloud_user/site-vitrine/eazytraining
       register: plugin_directory_status
 
     - name: Installation des plugins
