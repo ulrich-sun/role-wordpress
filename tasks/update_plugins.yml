@@ -69,7 +69,7 @@
         path: "{{ compose_project_dir }}/specific_backup_plugins/{{ plugin_to_update.plugin_name }}.yaml"
         state: touch
         owner: "{{ system_user }}"  # Specify appropriate owner
-        #group: www-data   # Specify appropriate group
+        group: cloud_user   # Specify appropriate group
         mode: '0755'   # Specify appropriate permissions
       when: updated_plugin_details | length > 0
 
