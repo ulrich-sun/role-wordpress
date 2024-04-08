@@ -3,10 +3,10 @@
   tags:
     - install_plugins
   block:
-    #- name: Vérifier les permissions d'écriture sur le dossier des plugins
-     # ansible.builtin.stat:
-      #  path: "{{ wordpress_site }}/wp-content/plugins"
-      #register: plugin_directory_status
+    - name: Vérifier les permissions d'écriture sur le dossier des plugins
+      ansible.builtin.stat:
+        path: "{{ wordpress_site }}/wp-content/plugins"
+      register: plugin_directory_status
 
     - name: Installation des plugins
       ansible.builtin.command: docker exec --user 33 {{ wordpress_container_name }} /usr/local/bin/wp plugin install "{{ item }}"
