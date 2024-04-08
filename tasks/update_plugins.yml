@@ -68,7 +68,7 @@
       ansible.builtin.file:
         path: "{{ compose_project_dir }}/specific_backup_plugins/{{ plugin_to_update.plugin_name }}.yaml"
         state: touch
-        owner: "{{ systeme_user }}"  # Specify appropriate owner
+        owner: "{{ system_user }}"  # Specify appropriate owner
         group: tape    # Specify appropriate group
         mode: '0755'   # Specify appropriate permissions
       when: updated_plugin_details | length > 0
