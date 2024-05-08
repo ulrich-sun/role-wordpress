@@ -1,25 +1,27 @@
-- block:
+---
+- name: Deploy wordpress
+  tags:  # Modifiez ici pour placer le tag correctement
+    - deploy
+  block:
     - name: Copy Docker Compose files and init script
-      template:
+      ansible.builtin.template:
         src: "{{ item.src }}"
         dest: "{{ item.dest }}"
         owner: "{{ system_user }}"
         group: "{{ system_user }}"
         mode: 0644
       with_items:
-        - { src: 'docker-compose.j2', dest: '{{ compose_project_dir }}/docker-compose.yml' }
-        - { src: 'init.sh.j2', dest: '{{ compose_project_dir }}/init.sh' }
+        - {src: 'docker-compose.j2', dest: '{{ compose_project_dir }}/docker-compose.yml'}
+        - {src: 'init.sh.j2', dest: '{{ compose_project_dir }}/init.sh'}
 
     - name: Start WordPress container
-      command:
+      ansible.builtin.command:
         cmd: "docker compose -f docker-compose.yml up -d"
       args:
         chdir: "{{ compose_project_dir }}"
+      changed_when: false
 
     - name: Exécuter le script dans le conteneur WordPress
-      command: docker exec wordpress bash -c "chmod +x /usr/local/bin/init.sh && /usr/local/bin/init.sh apache2-foreground"
+      ansible.builtin.command: docker exec wordpress bash -c "chmod +x /usr/local/bin/init.sh && /usr/local/bin/init.sh apache2-foreground"
+      changed_when: false
       failed_when: false
-
-  tags:    # Modifiez ici pour placer le tag correctement
-    - deploy
-

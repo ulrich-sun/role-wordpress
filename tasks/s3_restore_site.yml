@@ -1,58 +1,63 @@
 ---
-- block:
+- name: Restore site from s3
+  tags:
+    - restore_site_s3
+  block:
     - name: Synchroniser le répertoire local avec S3
       vars:
-          ansible_python_interpreter: /usr/local/bin/python3.8
+        ansible_python_interpreter: /usr/local/bin/python3.8
       aws_s3:
-          bucket: "{{ s3_bucket_name }}"
-          object: "{{ s3_remote_directory_site }}/{{ s3_filename_site }}"
-          dest: "{{ compose_project_dir }}/s3_site_restore/{{ s3_filename_site }}"
-          mode: get
-          secret_key: "{{ aws_secret_key }}"
-          access_key: "{{ aws_access_key}}"
-          region: "{{ region }}"
-          
+        bucket: "{{ s3_bucket_name }}"
+        object: "{{ s3_remote_directory_site }}/{{ s3_filename_site }}"
+        dest: "{{ compose_project_dir }}/s3_site_restore/{{ s3_filename_site }}"
+        mode: get
+        secret_key: "{{ aws_secret_key }}"
+        access_key: "{{ aws_access_key }}"
+        region: "{{ region }}"
+
     - name: Stop frontend container
-      command: docker stop {{ wordpress_container_name }}
+      ansible.builtin.command: docker stop {{ wordpress_container_name }}
       notify:
-        - restore_db_s3 
+        - Restore_db_s3
+      changed_when: false
 
     - name: "Flush handlers restore site from s3 bucket "
-      meta: flush_handlers
-    
-    - name: Extraire le fichier ZIP 
-      command: sudo unzip -o {{ s3_restore_file_name.restore_files_path }}/{{ s3_restore_file_name.restore_pattern }} -d unzip_folder/
+      ansible.builtin.meta: flush_handlers
+
+    - name: Extraire le fichier ZIP
+      ansible.builtin.command: sudo unzip -o {{ s3_restore_file_name.restore_files_path }}/{{ s3_restore_file_name.restore_pattern }} -d unzip_folder/
+      changed_when: false
 
     - name: Copier les fichiers extraits depuis unzip_folder au reperoire eazytraining
-      command: sh -c "sudo cp -r unzip_folder/* {{ wordpress_site }}"
+      ansible.builtin.command: sh -c "sudo cp -r unzip_folder/* {{ wordpress_site }}"
+      changed_when: false
 
     - name: Remove files from unzip folder
-      command: sh -c "sudo rm -r unzip_folder/*"
-      
+      ansible.builtin.command: sh -c "sudo rm -r unzip_folder/*"
+      changed_when: false
+
     - name: Changer le propriétaire et les permissions des répertoires
       #become: yes
       #become_user: "{{ system_user }}"
-      file:
+      ansible.builtin.file:
         path: "{{ wordpress_site }}"
         owner: centos
         group: 33
         recurse: yes
 
     - name: Changer les permissions du répertoire plugins
-      file:
+      ansible.builtin.file:
         path: "{{ wordpress_site }}/wp-content/plugins/"
         mode: "0775"
         recurse: yes
 
 
     - name: Changer les permissions du répertoire malcare-security
-      file:
+      ansible.builtin.file:
         path: "{{ wordpress_site }}/plugins/malcare-security"
         mode: "0777"
         recurse: yes
 
     - name: Start frontend container
-      command: docker start {{ wordpress_container_name }}      
-  tags:
-    - restore_site_s3
-
+      ansible.builtin.command: docker start {{ wordpress_container_name }}
+      changed_when: false

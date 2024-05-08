@@ -1,30 +1,36 @@
 ---
-- block:
-    - name: Vérifier l'installation d'AWS CLI
-      command: "aws --version"
-      register: aws_version
-      ignore_errors: true  # Ignorer les erreurs si awscli n'est pas déjà installé
-
-    - name: Télécharger et installer AWS CLI si ce n'est pas déjà installé
-      command: "curl -o /tmp/awscliv2.zip https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip && unzip -q /tmp/awscliv2.zip && sudo /tmp/aws/install"
-      when: "'not installed' in aws_version.stderr"
-      
-    - name: Synchroniser le répertoire local avec S3
-      vars:
-          ansible_python_interpreter: /usr/local/bin/python3.8
-      command: "/usr/local/bin/aws s3 sync s3://{{s3_bucket_name}}/{{ s3_remote_directory_themes }} {{ compose_project_dir }}/s3_global_theme_restore/{{ s3_filename_themes }}  --no-guess-mime-type"
-      environment:
-        AWS_ACCESS_KEY_ID: "{{ aws_access_key}}"
-        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
-        
-    - name: Extraire le fichier ZIP 
-      command: unzip -o "{{ s3_restore_themes_name.restore_files_path }}/{{ s3_filename_themes }}/{{ s3_restore_themes_name.restore_pattern }}" -d "unzip_folder/"
-
-    - name: Copier les fichiers extraits depuis unzip_folder au reperoire eazytraining
-      command: sudo rsync -a --delete unzip_folder/ {{ wordpress_site }}/wp-content/themes/
-
-    - name: Remove backup file from the WordPress 
-      command: sh -c "sudo rm -rf unzip_folder/*" 
-
+- name: Restore themes from s3
   tags:
     - restore_themes_s3
+  block:
+    - name: Vérifier l'installation d'AWS CLI
+      ansible.builtin.command: "aws --version"
+      register: aws_version
+      ignore_errors: true  # Ignorer les erreurs si awscli n'est pas déjà installé
+      changed_when: false
+
+    - name: Télécharger et installer AWS CLI si ce n'est pas déjà installé
+      ansible.builtin.command: "curl -o /tmp/awscliv2.zip https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip && unzip -q /tmp/awscliv2.zip && sudo /tmp/aws/install"
+      when: "'not installed' in aws_version.stderr"
+      changed_when: false
+
+    - name: Synchroniser le répertoire local avec S3
+      vars:
+        ansible_python_interpreter: /usr/local/bin/python3.8
+      ansible.builtin.command: "/usr/local/bin/aws s3 sync s3://{{ s3_bucket_name }}/{{ s3_remote_directory_themes }} {{ compose_project_dir }}/s3_global_theme_restore/{{ s3_filename_themes }}  --no-guess-mime-type"
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+      changed_when: false
+
+    - name: Extraire le fichier ZIP
+      ansible.builtin.command: unzip -o "{{ s3_restore_themes_name.restore_files_path }}/{{ s3_filename_themes }}/{{ s3_restore_themes_name.restore_pattern }}" -d "unzip_folder/"
+      changed_when: false
+
+    - name: Copier les fichiers extraits depuis unzip_folder au reperoire eazytraining
+      ansible.builtin.command: sudo rsync -a --delete unzip_folder/ {{ wordpress_site }}/wp-content/themes/
+      changed_when: false
+
+    - name: Remove backup file from the WordPress
+      ansible.builtin.command: sh -c "sudo rm -rf unzip_folder/*"
+      changed_when: false

@@ -1,27 +1,28 @@
 ---
-- block:
+- name: Deactivate theme
+  tags:
+    - deactivate_themes
+  block:
     - name: Désactivation du thème actuel
-      command: /usr/local/bin/wp theme activate "{{ new_theme }}" --allow-root --ssh=docker:{{ wordpress_container_name }}
+      ansible.builtin.command: /usr/local/bin/wp theme activate "{{ new_theme }}" --allow-root --ssh=docker:{{ wordpress_container_name }}
       vars:
         new_theme: "{{ new_theme_to_activate }}"
       when: new_theme_to_activate is defined
-  tags:
-    - deactivate_themes
+      changed_when: false  # Indicate that the task should not be considered as having changed anything
 
-- block:
+- name: Uninstall themes
+  tags:
+    - uninstall_themes
+  block:
     - name: Vérification du statut des thèmes à désinstaller
-      command: "/usr/local/bin/wp theme status '{{ item }}' --allow-root --ssh=docker:{{ wordpress_container_name }}"
+      ansible.builtin.command: "/usr/local/bin/wp theme status '{{ item }}' --allow-root --ssh=docker:{{ wordpress_container_name }}"
       loop: "{{ themes_to_uninstall }}"
       register: theme_status
       when: themes_to_uninstall is defined
-      
+      changed_when: false  # Indicate that the task should not be considered as having changed anything
+
     - name: Désinstallation des thèmes
-      command: "/usr/local/bin/wp theme uninstall '{{ item.item }}' --allow-root --ssh=docker:{{ wordpress_container_name }}"
+      ansible.builtin.command: "/usr/local/bin/wp theme uninstall '{{ item.item }}' --allow-root --ssh=docker:{{ wordpress_container_name }}"
       loop: "{{ theme_status.results }}"
       when: item.stdout is defined and item.stdout | regex_search('Status:\\s*Inactive')
-  tags:
-    - uninstall_themes
-
-
-
-
+      changed_when: false  # Indicate that the task should not be considered as having changed anything

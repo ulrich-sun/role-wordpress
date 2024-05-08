@@ -1,21 +1,21 @@
 ---
-- block:
-    - name: Install botocore and boto3 using pip3.8
-      command: /usr/local/bin/pip3.8 install botocore boto3
-      vars:
-        ansible_python_interpreter: /usr/local/bin/python3.8
-        
-    - name: Synchroniser le répertoire local avec S3
-      vars:
-          ansible_python_interpreter: /usr/local/bin/python3.8
-      s3_sync:
-          bucket: "{{ s3_bucket_name }}"
-          file_root: "{{ global_backup_db }}"
-          delete: false
-          secret_key: "{{ aws_secret_key }}"
-          access_key: "{{ aws_access_key}}"
-          key_prefix: "{{ s3_remote_directory_db }}"
-    
+- name: Backup db on s3
   tags:
     - backup_db_s3
+  block:
+    - name: Install botocore and boto3 using pip3.8
+      ansible.builtin.command: /usr/local/bin/pip3.8 install botocore boto3
+      vars:
+        ansible_python_interpreter: /usr/local/bin/python3.8
+      changed_when: false
 
+    - name: Synchroniser le répertoire local avec S3
+      vars:
+        ansible_python_interpreter: /usr/local/bin/python3.8
+      s3_sync:
+        bucket: "{{ s3_bucket_name }}"
+        file_root: "{{ global_backup_db }}"
+        delete: false
+        secret_key: "{{ aws_secret_key }}"
+        access_key: "{{ aws_access_key }}"
+        key_prefix: "{{ s3_remote_directory_db }}"

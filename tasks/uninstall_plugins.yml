@@ -1,22 +1,25 @@
 ---
 - name: Désactivation des plugins
-  command:  /usr/local/bin/wp plugin deactivate "{{ item }}" --allow-root --ssh=docker:{{ wordpress_container_name }}
+  ansible.builtin.command: /usr/local/bin/wp plugin deactivate "{{ item }}" --allow-root --ssh=docker:{{ wordpress_container_name }}
   loop: "{{ plugins_to_deactivate }}"
   when: plugins_to_deactivate is defined and plugins_to_deactivate | length > 0
+  changed_when: false  # Indicate that the task should not be considered as having changed anything
   tags:
     - deactivate_plugins
 
-- block:
+- name: Uninstall plugin
+  tags:
+    - uninstall_plugins
+  block:
     - name: Vérifier les permissions d'écriture sur le dossier des plugins
-      stat:
+      ansible.builtin.stat:
         path: "{{ wordpress_directory }}/wp-content/plugins"
       register: plugin_directory_status
-        
+
     - name: Désinstallation des plugins
-      command: docker exec --user 33 {{ wordpress_container_name }} wp plugin uninstall "{{ item }}"  
+      ansible.builtin.command: docker exec --user 33 {{ wordpress_container_name }} wp plugin uninstall "{{ item }}"
       loop: "{{ plugins_to_uninstall }}"
       when:
         - plugins_to_uninstall is defined and plugins_to_uninstall | length > 0
         - "plugin_directory_status.stat.mode == '0775'"
-  tags:
-    - uninstall_plugins
+      changed_when: false  # Indicate that the task should not be considered as having changed anything

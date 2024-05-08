@@ -1,7 +1,10 @@
 ---
-- block:
+- name: Backup specific plugin in local
+  tags:
+    - plugin_specific_backup
+  block:
     - name: Set variables
-      set_fact:
+      ansible.builtin.set_fact:
         container_name: "{{ wordpress_container_name }}"
         wp_dir: "{{ wordpress_site }}/wp-content/plugins"
         site_name: "EAZYTraining"
@@ -9,25 +12,24 @@
         unique_id: "{{ lookup('password', '/dev/null length=10 chars=ascii_letters,digits') }}"
 
     - name: Get plugin version from the plugin file
-      command: "/usr/local/bin/wp plugin get {{ plugin_to_update.plugin_name }} --field=version --allow-root --ssh=docker:{{ wordpress_container_name }}"
+      ansible.builtin.command: "/usr/local/bin/wp plugin get {{ plugin_to_update.plugin_name }} --field=version --allow-root --ssh=docker:{{ wordpress_container_name }}"
       register: plugin_version_result
       changed_when: False
 
     - name: Set file name
-      set_fact:
+      ansible.builtin.set_fact:
         backup_file_name: "backup_{{ timestamp }}_{{ site_name }}_{{ unique_id }}_{{ plugin_to_update.plugin_name }}_{{ plugin_version_result.stdout }}.zip"
 
-    - name: Backup the specific plugin 
-      command: sh -c "cd {{ wp_dir }} && sudo zip -r {{ plugin_to_update.plugin_name }}/{{ backup_file_name }} {{ plugin_to_update.plugin_name }}"
+    - name: Backup the specific plugin
+      ansible.builtin.command: sh -c "cd {{ wp_dir }} && sudo zip -r {{ plugin_to_update.plugin_name }}/{{ backup_file_name }} {{ plugin_to_update.plugin_name }}"
+      changed_when: false  # Indicate that the task should not be considered as having changed anything
 
     - name: Copy backup file
-      command: sudo cp {{ wp_dir }}/{{ plugin_to_update.plugin_name }}/{{ backup_file_name }} {{ specific_backup_plugins }}
+      ansible.builtin.command: sudo cp {{ wp_dir }}/{{ plugin_to_update.plugin_name }}/{{ backup_file_name }} {{ specific_backup_plugins }}
       notify:
-        - s3_specific_plugins_backup_handler
+        - S3_specific_plugins_backup_handler
+      changed_when: false  # Indicate that the task should not be considered as having changed anything
 
     - name: Remove backup file from the WordPress folder
-      command: sudo rm -f {{ wp_dir }}/{{ plugin_to_update.plugin_name }}/{{ backup_file_name }}
-
-  tags:
-    - plugin_specific_backup
-
+      ansible.builtin.command: sudo rm -f {{ wp_dir }}/{{ plugin_to_update.plugin_name }}/{{ backup_file_name }}
+      changed_when: false  # Indicate that the task should not be considered as having changed anything

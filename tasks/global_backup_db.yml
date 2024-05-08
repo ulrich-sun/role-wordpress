@@ -1,7 +1,10 @@
 ---
-- block:
+- name: Backup db
+  tags:
+    - global_backup_db
+  block:
     - name: Set variables
-      set_fact:
+      ansible.builtin.set_fact:
         container_name: "{{ wordpress_container_name }}"
         wp_dir: "."
         site_name: "EAZYTraining"
@@ -9,25 +12,23 @@
         unique_id: "{{ lookup('password', '/dev/null length=10 chars=ascii_letters,digits') }}"
 
     - name: Set file name of data base
-      set_fact:
+      ansible.builtin.set_fact:
         backup_file_db: "backup_{{ timestamp }}_{{ site_name }}_{{ unique_id }}_global_db.sql"
 
-    #- name: supprimer les fichiers
-     # command: sh -c "rm -r "{{ compose_project_dir }}/{{ backup_db_dir }}/*""
+    # - name: supprimer les fichiers
+    #   command: sh -c "rm -r "{{ compose_project_dir }}/{{ backup_db_dir }}/*""
 
     - name: Backup database
-      #command: cd  {{ compose_project_dir }}/{{ backup_db_dir }}
-      command: docker exec {{ db_container_name }} sh -c "MYSQL_PWD='{{ db_root_psw }}' mysqldump -u root {{ wp_db_name }} > {{ wp_dir }}/{{ backup_file_db }}"
-      notify: 
-        - s3_global_db_backup_handler
+      # command: cd  {{ compose_project_dir }}/{{ backup_db_dir }}
+      ansible.builtin.command: docker exec {{ db_container_name }} sh -c "MYSQL_PWD='{{ db_root_psw }}' mysqldump -u root {{ wp_db_name }} > {{ wp_dir }}/{{ backup_file_db }}"
+      #notify:
+       # - S3_global_db_backup_handler
+      changed_when: false
 
     - name: Copy file from container to host
-      command: docker cp "{{ db_container_name }}:{{ wp_dir }}/{{ backup_file_db }}" "{{ compose_project_dir }}/{{ backup_db_dir }}"
-      notify:
-        - s3_global_db_backup_handler
-        
-    - name: Remove file from mysql container
-      command: docker exec {{ db_container_name }} sh -c 'rm -rf {{ wp_dir }}/*.sql'
+      ansible.builtin.command: docker cp "{{ db_container_name }}:{{ wp_dir }}/{{ backup_file_db }}" "{{ compose_project_dir }}/{{ backup_db_dir }}"
+      changed_when: false
 
-  tags:
-    - global_backup_db
+    - name: Remove file from mysql container
+      ansible.builtin.command: docker exec {{ db_container_name }} sh -c 'rm -rf {{ wp_dir }}/*.sql'
+      changed_when: false

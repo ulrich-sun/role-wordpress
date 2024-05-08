@@ -1,52 +1,58 @@
 ---
-- block:
+- name: Update plugin
+  tags:
+    - update_plugin
+  block:
     - name: Récupérer les plugins installés avant la mise à jour
-      command: /usr/local/bin/wp plugin list --format=json --allow-root --ssh=docker:{{ wordpress_container_name }}
+      ansible.builtin.command: /usr/local/bin/wp plugin list --format=json --allow-root --ssh=docker:{{ wordpress_container_name }}
       register: installed_plugins_before_update
-      notify: 
-        - backup_plugin_handler
-        - activate_plugin_update
-        - activate_plugin_malcare-security_update
-        
+      notify:
+        - Backup_plugin_handler
+        - Activate_plugin_update
+        - Activate_plugin_malcare-security_update
+      changed_when: false  # Indicate that the task should not be considered as having changed anything
+
     - name: "Flush handlers backup and activate rights of plugins"
-      meta: flush_handlers
+      ansible.builtin.meta: flush_handlers
 
     - name: Vérifier les permissions d'écriture sur le dossier des plugins
-      stat:
+      ansible.builtin.stat:
         path: "{{ wordpress_directory }}/wp-content/plugins"
       register: plugin_directory_status
-    
+
     - name: Mettre à jour le plugin
-      command: /usr/local/bin/wp plugin update "{{ plugin_to_update.plugin_name }}" --version="{{ plugin_to_update.new_version }}" --allow-root --ssh=docker:{{ wordpress_container_name }}
+      ansible.builtin.command: /usr/local/bin/wp plugin update "{{ plugin_to_update.plugin_name }}" --version="{{ plugin_to_update.new_version }}" --allow-root --ssh=docker:{{ wordpress_container_name }}
       register: plugin_update_output
       when:
         - plugin_to_update.plugin_name is defined and plugin_to_update.plugin_name | length > 0
         - "plugin_directory_status.stat.mode == '0775'"
       notify:
-        - deactivate_plugin_update
-        - activate_plugin_malcare-security_update
-      
+        - Deactivate_plugin_update
+        - Activate_plugin_malcare-security_update
+      changed_when: false  # Indicate that the task should not be considered as having changed anything
+
     - name: Récupérer les plugins installés après la mise à jour
-      command: /usr/local/bin/wp plugin list --format=json --allow-root --ssh=docker:{{ wordpress_container_name }}
+      ansible.builtin.command: /usr/local/bin/wp plugin list --format=json --allow-root --ssh=docker:{{ wordpress_container_name }}
       register: installed_plugins_after_update
+      changed_when: false  # Indicate that the task should not be considered as having changed anything
 
     - name: Afficher le contenu des plugins après la mise à jour
-      debug:
+      ansible.builtin.debug:
         var: installed_plugins_after_update.stdout | from_json
 
     - name: Comparer les versions des plugins avant et après la mise à jour
-      set_fact:
+      ansible.builtin.set_fact:
         updated_plugins: []
       when:
         - installed_plugins_before_update is defined
         - installed_plugins_after_update is defined
 
     - name: Initialiser la variable updated_plugin_details
-      set_fact:
+      ansible.builtin.set_fact:
         updated_plugin_details: []
 
     - name: Collecter les détails du plugin mis à jour avant et après la mise à jour
-      set_fact:
+      ansible.builtin.set_fact:
         updated_plugin_details: "{{ updated_plugin_details | default([]) + [{'plugin_name': item.name, 'before_update': plugin_before_update, 'after_update': plugin_after_update, 'update_date': ansible_date_time.iso8601}] }}"
       vars:
         plugin_before_update: "{{ installed_plugins_before_update.stdout | from_json | selectattr('name', 'equalto', item.name) | list | first }}"
@@ -59,17 +65,17 @@
         - item.version != (installed_plugins_before_update.stdout | from_json | selectattr('name', 'equalto', item.name) | map(attribute='version') | first)
 
     - name: Créer le fichier s'il n'existe pas
-      file:
+      ansible.builtin.file:
         path: "{{ compose_project_dir }}/specific_backup_plugins/{{ plugin_to_update.plugin_name }}.yaml"
         state: touch
+        owner: "{{ system_user }}"  # Specify appropriate owner
+        group: "{{ system_group }}"   # Specify appropriate group
+        mode: '0755'   # Specify appropriate permissions
       when: updated_plugin_details | length > 0
 
     - name: Ajouter les détails des plugins mis à jour au fichier existant
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: "{{ compose_project_dir }}/specific_backup_plugins/{{ plugin_to_update.plugin_name }}.yaml"
         line: "{{ updated_plugin_details | to_yaml | indent(width=2) }}"
         insertafter: EOF
       when: updated_plugin_details | length > 0
-    
-  tags:
-    - update_plugin

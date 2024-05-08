@@ -1,24 +1,29 @@
-- block:
+---
+- name: Cleanup
+  tags:
+    - cleanup_backup
+  block:
     - name: Get a list of backup files
-      find:
+      ansible.builtin.find:
         paths: "{{ global_backup_db }}"
         patterns: "backup_*_EAZYTraining_*_global_db.sql"
-      register: backup_files 
+      register: backup_files
 
     - name: Get today's date
-      set_fact:
+      ansible.builtin.set_fact:
         current_date: "{{ ansible_date_time.date }}"
-    
+
     - name: Subtract 2 days from today's date
-      command: date -d "{{ current_date }} - 2 days" +"%Y-%m-%d"
+      ansible.builtin.command: date -d "{{ current_date }} - 2 days" +"%Y-%m-%d"
       register: two_days_ago
-    
+      changed_when: false
+
     #- name: Show today's date subtracted by 2 days
      # debug:
       #  var: two_days_ago.stdout
-    
+
     - name: Compare with regular expression output
-      debug:
+      ansible.builtin.debug:
         msg: "oui"
       when: item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
       loop: "{{ backup_files.files }}"
@@ -26,29 +31,28 @@
         label: "{{ item.path }}"
 
     - name: Delete old files
-      command: "rm {{ item.path }}"
+      ansible.builtin.command: "rm {{ item.path }}"
       loop: "{{ backup_files.files }}"
       loop_control:
         label: "{{ item.path }}"
+      changed_when: false
       when: item.path | regex_replace('^.{78}(.{2}).*', '\\1') != '23' and item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
-      
+
     - name: Renommer les fichiers conformes
-      command: "mv {{ item.path }} {{ global_backup_db }}/{{ 'daily_' + item.path.split('/')[-1] }}"
+      ansible.builtin.command: "mv {{ item.path }} {{ global_backup_db }}/{{ 'daily_' + item.path.split('/')[-1] }}"
       loop: "{{ backup_files.files }}"
       loop_control:
         label: "{{ item.path }}"
       when: item.path | regex_replace('^.{78}(.{2}).*', '\\1') == '23' and item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
+      changed_when: false
 
     - name: Synchroniser le répertoire local avec S3
       vars:
-          ansible_python_interpreter: /usr/local/bin/python3.8
+        ansible_python_interpreter: /usr/local/bin/python3.8
       s3_sync:
-          bucket: "{{ s3_bucket_name }}"
-          file_root: "{{ global_backup_db }}"
-          delete: yes
-          secret_key: "{{ aws_secret_key }}"
-          access_key: "{{ aws_access_key}}"
-          key_prefix: "{{ s3_remote_directory_db }}"
-        
-  tags:
-    - cleanup_backup
+        bucket: "{{ s3_bucket_name }}"
+        file_root: "{{ global_backup_db }}"
+        delete: yes
+        secret_key: "{{ aws_secret_key }}"
+        access_key: "{{ aws_access_key }}"
+        key_prefix: "{{ s3_remote_directory_db }}"

@@ -2,6 +2,10 @@ galaxy_info:
   author: Aurelie Kamgang
   description: primary operation in wordpress site
   company: your company (optional)
+  # if absent directory name hosting role is used instead
+  role_name: my_name
+  # if absent, author is used instead
+  namespace: my_galaxy_namespace
 
   # If the issue tracker for your role is not on github, uncomment the
   # next line and provide a value
@@ -16,12 +20,12 @@ galaxy_info:
   # - CC-BY-4.0
   license: license (GPL-2.0-or-later, MIT, etc)
 
-  min_ansible_version: 2.1
+  min_ansible_version: "2.1"
 
   platforms:
     - name: EL
       versions:
-        - 7
+        - "7"
 
   # If this a Container Enabled role, provide the minimum Ansible Container version.
   # min_ansible_container_version:
@@ -44,7 +48,7 @@ galaxy_info:
   #   - 7
   #   - 99.99
 
-  galaxy_tags: 
+  galaxy_tags:
     - wordpress
     # List tags for your role here, one per line. A tag is a keyword that describes
     # and categorizes the role. Users find roles by searching for tags. Be sure to

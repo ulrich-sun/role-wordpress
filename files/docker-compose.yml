@@ -1,10 +1,11 @@
+---
 version: '3.3'
 services:
   db:
     container_name: db
     image: mysql:5.7
     volumes:
-     - db_data:/var/lib/mysql
+      - db_data:/var/lib/mysql
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: somewordpress
@@ -14,10 +15,10 @@ services:
   wordpress:
     container_name: wordpress
     depends_on:
-     - db
+      - db
     image: wordpress:5.3.2
     ports:
-     - "80:80"
+      - "80:80"
     restart: always
     environment:
       WORDPRESS_DB_HOST: db:3306
@@ -34,8 +35,8 @@ services:
     container_name: phpmyadmin
     restart: always
     ports:
-     - 8080:80
+      - 8080:80
     volumes:
-     - /sessions
+      - /sessions
 volumes:
-    db_data:
+  db_data:
