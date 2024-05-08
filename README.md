@@ -666,7 +666,28 @@ These hooks can be used to detect potential security issues in the source code a
         - run `pre-commit install` to set up the git hook scripts
         - it's usually a good idea to run the hooks against all of the files when adding new hooks (usually pre-commit will only run on the changed files during git hooks) with command: `git add .` , `pre-commit autoupdate` and `pre-commit run --all-files`
         - Then commit and push your code
-      
+
+## Manage user in Ansible semaphore
+
+Ansible Semaphore is an orchestration and automation management tool that simplifies the use of Ansible by providing a graphical user interface for managing projects and tasks. When it comes to managing users and roles, Semaphore offers a flexible structure for defining who can do what within the tool. Here is an explanation of the different team-level roles and user-level permissions:
+
+Roles at Team Level
+- Owner
+Permissions: Owners have full control over the team and its projects. They can manage team members, configure projects, execute and modify all tasks, and also have the rights to delete the team or modify its configurations.
+- Manager
+Permissions: Managers can manage project configurations within the team. They can create, modify and delete projects and tasks, but cannot modify team configurations or manage team members.
+- Task Runner
+Permissions: Task Runners can run tasks and view the results. They have access to projects for which they are authorised, but cannot create new projects or modify existing configurations.
+- Guest
+Permissions: Guests have very limited access rights, usually read-only. They can view projects and tasks, but cannot run tasks or modify anything.
+User Level Permissions
+- Alert
+Permissions: Users with the Alert role can receive notifications about tasks or projects. This role is often used to inform stakeholders or team members who need to be kept informed of the progress or execution of tasks without being actively involved in managing them.
+- Admin
+Permissions: Administrators have extensive rights to Semaphore.They can manage all aspects of the application, including user, team and system configurations.They can add or remove users, manage team roles, and have access to all administrative features.
+
+User management in Ansible Semaphore is designed to offer flexibility and granular control over who can see or do what in the tool.This structure helps secure automation environments while providing enough flexibility for different parties to collaborate effectively.Make sure you plan who needs what level of access to maintain both security and efficiency in your automation projects.
+
 ## Version 6
 
 - galaxy role release
