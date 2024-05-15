@@ -1,12 +1,19 @@
-  - name: Ensure pip is present
+- name: Backup site in google drive
+  tags:
+    - google_drive_backup
+  block:
+    - name: Ensure pip is present
       ansible.builtin.package:
         name: python3-pip
         state: present
+      changed_when: false 
 
     - name: Install PyDrive
       ansible.builtin.pip:
         name: PyDrive
         state: present
+      changed_when: false 
 
     - name: Upload the backup to Google Drive
-      script: upload_to_gdrive.py "{{ backup_path }}" "{{ gdrive_settings_path }}" "{{ gdrive_credentials_path }}"
+      ansible.builtin.command: python3 backup.py
+      changed_when: false      
