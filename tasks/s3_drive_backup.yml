@@ -1,0 +1,8 @@
+- name: Include drive_backup, s3_global_db_backup and s3_backup_site task
+  include_tasks: "{{ item }}"
+  loop:
+    - drive_backup.yml
+    - s3_global_db_backup.yml
+    - s3_backup_site.yml
+  tags:
+    - s3_drive_backup
