@@ -1,0 +1,12 @@
+  - name: Ensure pip is present
+      ansible.builtin.package:
+        name: python3-pip
+        state: present
+
+    - name: Install PyDrive
+      ansible.builtin.pip:
+        name: PyDrive
+        state: present
+
+    - name: Upload the backup to Google Drive
+      script: upload_to_gdrive.py "{{ backup_path }}" "{{ gdrive_settings_path }}" "{{ gdrive_credentials_path }}"
