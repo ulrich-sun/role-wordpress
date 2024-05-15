@@ -18,9 +18,15 @@
     # - name: supprimer les fichiers
     #   command: sh -c "rm -r "{{ compose_project_dir }}/{{ backup_db_dir }}/*""
 
-    - name: Backup database
+    - name: Backup database with backup_file_db name
       # command: cd  {{ compose_project_dir }}/{{ backup_db_dir }}
       ansible.builtin.command: docker exec {{ db_container_name }} sh -c "MYSQL_PWD='{{ db_root_psw }}' mysqldump -u root {{ wp_db_name }} > {{ wp_dir }}/{{ backup_file_db }}"
+      #notify:
+       # - S3_global_db_backup_handler
+      changed_when: false
+
+    - name: Backup database without backup_file_db name for google drive
+      ansible.builtin.command: docker exec {{ db_container_name }} sh -c "MYSQL_PWD='{{ db_root_psw }}' mysqldump -u root {{ wp_db_name }} > {{ wp_dir }}/{{ wordpress }}"
       #notify:
        # - S3_global_db_backup_handler
       changed_when: false
