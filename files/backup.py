@@ -5,10 +5,18 @@ from pydrive.drive import GoogleDrive
 gauth = GoogleAuth()
 drive = GoogleDrive(gauth)
 
-# List of files to be uploaded with their IDs and filenames
+# List of files to be uploaded with their IDs, filenames, and full paths
 upload_file_list = [
-    {'filename': 'wordpress.sql', 'id': '1Sg1-lDb2mFwGpq6-xfi_T38NK3gtONn5'},
-    {'filename': 'wp-frontend.zip', 'id': '10yBJv6NYuo5uZqLiKTRhXen6pPtTAAfU'}
+    {
+        'filename': 'wordpress.sql',
+        'path': '{{ global_backup_db }}/wordpress.sql',  # Full local path
+        'id': '1Sg1-lDb2mFwGpq6-xfi_T38NK3gtONn5'
+    },
+    {
+        'filename': 'wp-frontend.zip',
+        'path': '{{ global_backup_site }}/wp-frontend.zip',  # Full local path
+        'id': '10yBJv6NYuo5uZqLiKTRhXen6pPtTAAfU'
+    }
 ]
 
 # Loop through the file list and upload each file
