@@ -126,6 +126,7 @@
 
 - name: Backup db to AWS S3
   ansible.builtin.include_tasks: s3_global_db_backup.yml
+  when: backup == 's3'
   tags:
     - backup_db_s3
 
@@ -156,6 +157,7 @@
 
 - name: Backup global site to AWS S3
   ansible.builtin.include_tasks: s3_backup_site.yml
+  when: backup == 's3'
   tags:
     - backup_site_s3
 
@@ -204,3 +206,17 @@
   ansible.builtin.include_tasks: download.yml
   tags:
     - download
+
+- name: Include Google Drive Backup Tasks
+  ansible.builtin.include_tasks: drive_backup.yml
+  when: backup == 'drive'
+  tags:
+    - drive_backup
+
+- name: Include Combined S3 and Google Drive Backup Tasks
+  ansible.builtin.include_tasks:
+    - drive_backup.yml
+    - s3_backup_site.yml
+  when: backup == 's3_drive'
+  tags:
+    - s3_drive_backup
