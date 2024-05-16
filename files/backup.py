@@ -15,7 +15,7 @@ upload_file_list = [
     {
         'filename': 'wp-frontend.zip',
         'path': '{{ global_backup_site }}/wp-frontend.zip',  # Full local path
-        'id': '10yBJv6NYuo5uZqLiKTRhXen6pPtTAAfU'
+        'id': '1J_6oxi9W1gMwhAj3SIS6Alpj-aP-ueFr'
     }
 ]
 
