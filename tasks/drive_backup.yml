@@ -11,6 +11,7 @@
     - name: Install PyDrive
       ansible.builtin.pip:
         name: PyDrive
+        executable: pip3
         state: present
       changed_when: false 
 
@@ -35,6 +36,12 @@
         src: client_secrets.json
         dest: {{ compose_project_dir }}/Pydrive/
         changed_when: false 
+
+    - name: Copy settings.yaml to wordpress server
+      ansible.builtin.copy:
+        src: settings.yaml
+        dest: {{ compose_project_dir }}/Pydrive/
+        changed_when: false
 
     - name: Upload the backup to Google Drive
       ansible.builtin.command: python3 {{ compose_project_dir }}/Pydrive/backup.py
