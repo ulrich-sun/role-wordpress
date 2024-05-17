@@ -33,7 +33,7 @@
 
     - name: Copy credentials.txt" to wordpress server
       ansible.builtin.copy:
-        src: credentials.txt"
+        src: credentials.txt
         dest: "{{ compose_project_dir }}/Pydrive/"
         decrypt: yes
         vault_password: "{{ google_drive_credentials_key }}"
