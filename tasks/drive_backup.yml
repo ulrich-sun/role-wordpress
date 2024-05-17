@@ -11,7 +11,7 @@
     - name: Install PyDrive
       ansible.builtin.pip:
         name: PyDrive
-        executable: pip3
+        executable: /usr/local/bin/pip3.8
         state: present
       changed_when: false 
 
