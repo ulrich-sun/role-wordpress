@@ -35,6 +35,7 @@
       ansible.builtin.copy:
         src: credentials.txt
         dest: "{{ compose_project_dir }}/Pydrive/credentials.txt"
+        decrypt: no
 
     - name: Copy client_secrets.json to wordpress server
       ansible.builtin.copy:
