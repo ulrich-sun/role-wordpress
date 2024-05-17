@@ -40,7 +40,7 @@
     - name: Copy client_secrets.json to wordpress server
       ansible.builtin.copy:
         src: client_secrets.json
-        dest: "{{ compose_project_dir }}/Pydrive/credentials.txt"
+        dest: "{{ compose_project_dir }}/Pydrive/client_secrets.json"
         decrypt: no
 
     - name: Decrypt client_secrets.json
