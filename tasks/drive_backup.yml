@@ -32,9 +32,9 @@
       changed_when: false  
 
     - name: Decrypt client_secrets.json
-      hosts: localhost
       ansible.builtin.command: ansible-vault decrypt "client_secrets.json" --output "/home/vagrant/client_secrets.json" --vault-password '{{ google_drive_secret_key }}'
       changed_when: false
+      delegate_to:: localhost
 
     - name: Copy credentials.txt to wordpress server
       environment:
