@@ -23,13 +23,13 @@
       ansible.builtin.copy:
         src: backup.py
         dest: "{{ compose_project_dir }}/Pydrive/"
-        changed_when: false 
+      changed_when: false 
 
     - name: Copy settings.yaml to wordpress server
       ansible.builtin.copy:
         src: settings.yaml
         dest: "{{ compose_project_dir }}/Pydrive/"
-        changed_when: false  
+      changed_when: false  
 
     - name: Decrypt client_secrets.json
       ansible.builtin.command: ansible-vault decrypt "{{ compose_project_dir }}/Pydrive/client_secrets.json" --output "{{ compose_project_dir }}/Pydrive/client_secrets.json" --vault-password '{{ google_drive_secret_key }}'
