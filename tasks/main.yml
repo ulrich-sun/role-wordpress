@@ -209,7 +209,7 @@
 
 - name: Include Google Drive Backup Tasks
   ansible.builtin.include_tasks: drive_backup.yml
-  when: '{{ backup }}' == 'drive'
+  when: "'{{ backup }}' == 'drive'"
   tags:
     - google_drive_backup
 
