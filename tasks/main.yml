@@ -211,7 +211,7 @@
   ansible.builtin.include_tasks: drive_backup.yml
   when: backup == 'drive'
   tags:
-    - drive_backup
+    - google_drive_backup
 
 - name: Include Combined S3 and Google Drive Backup Tasks
   ansible.builtin.include_tasks:
