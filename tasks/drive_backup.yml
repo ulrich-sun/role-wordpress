@@ -31,7 +31,7 @@
         dest: "{{ compose_project_dir }}/Pydrive/"
       changed_when: false  
 
-    - name: Copy credentials.txt" to wordpress server
+    - name: Copy credentials.txt to wordpress server
       ansible.builtin.copy:
         src: credentials.txt
         dest: "{{ compose_project_dir }}/Pydrive/credentials.txt"
