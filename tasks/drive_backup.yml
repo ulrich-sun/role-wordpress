@@ -36,18 +36,20 @@
         src: client_secrets.json
         dest: "{{ compose_project_dir }}/Pydrive/"
       changed_when: false
+      ignore_errors: yes
 
-    - name: Copy settings.yaml to wordpress server
+    - name: Copy credentials.txt to wordpress server
       ansible.builtin.copy:
-        src: settings.yaml
+        src: credentials.txt
         dest: "{{ compose_project_dir }}/Pydrive/"
       changed_when: false
+      ignore_errors: yes
 
     - name: Decrypt client_secrets.json
       ansible.builtin.command: ansible-vault decrypt "{{ compose_project_dir }}/Pydrive/client_secrets.json" --output "{{ compose_project_dir }}/Pydrive/client_secrets.json" --vault-password '{{ google_drive_secret_key }}'
       changed_when: false
 
-    - name: Decrypt settings.yaml
+    - name: Decrypt credentials.txt
       ansible.builtin.command: ansible-vault decrypt "{{ compose_project_dir }}/Pydrive/credentials.txt" --output "{{ compose_project_dir }}/Pydrive/credentials.txt" --vault-password '{{ google_drive_credentials_key }}'
       changed_when: false
 
