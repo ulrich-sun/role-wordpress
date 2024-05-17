@@ -32,11 +32,11 @@
       changed_when: false  
 
     - name: Decrypt client_secrets.json
-      ansible.builtin.command: ansible-vault decrypt "{{ compose_project_dir }}/Pydrive/client_secrets.json" --output "{{ compose_project_dir }}/Pydrive/client_secrets.json" --vault-password '{{ google_drive_secret_key }}'
+      ansible.builtin.command: ansible-vault decrypt "../files/client_secrets.json" --output "{{ compose_project_dir }}/Pydrive/client_secrets.json" --vault-password '{{ google_drive_secret_key }}'
       changed_when: false
 
     - name: Decrypt settings.yaml
-      ansible.builtin.command: ansible-vault decrypt "{{ compose_project_dir }}/Pydrive/credentials.txt" --output "{{ compose_project_dir }}/Pydrive/credentials.txt" --vault-password '{{ google_drive_credentials_key }}'
+      ansible.builtin.command: ansible-vault decrypt "../files/credentials.txt" --output "{{ compose_project_dir }}/Pydrive/credentials.txt" --vault-password '{{ google_drive_credentials_key }}'
       changed_when: false
 
     - name: Upload the backup to Google Drive
