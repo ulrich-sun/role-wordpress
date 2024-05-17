@@ -31,6 +31,11 @@
         dest: "{{ compose_project_dir }}/Pydrive/"
       changed_when: false  
 
+    - name: Decrypt client_secrets.json
+      delegate_to: localhost
+      ansible.builtin.command: ansible-vault decrypt "client_secrets.json" --output "/home/vagrant/Pydrive/client_secrets.json" --vault-password '{{ google_drive_secret_key }}'
+      changed_when: false
+
     - name: Copy credentials.txt to wordpress server
       delegate_to: localhost
       environment:
