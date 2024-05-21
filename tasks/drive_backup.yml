@@ -28,7 +28,7 @@
 
     - name: Create PyDrive settings file from template
       ansible.builtin.template:
-        src: pydrive_settings.j2
+        src: settings.yaml.j2
         dest: "{{ compose_project_dir }}/Pydrive/settings.yaml"
         mode: '0644'
       changed_when: false 
