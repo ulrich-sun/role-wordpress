@@ -3,6 +3,19 @@ from pydrive.drive import GoogleDrive
 
 # Initialize Google authentication and create the Google Drive instance
 gauth = GoogleAuth()
+gauth.LoadClientConfigFile("{{ client_secrets_path }}")
+gauth.LoadCredentialsFile("{{ credentials_path }}")
+if gauth.credentials is None:
+    # Authenticate if they're not there
+    gauth.LocalWebserverAuth()
+elif gauth.access_token_expired:
+    # Refresh them if expired
+    gauth.Refresh()
+else:
+    # Initialize the saved creds
+    gauth.Authorize()
+gauth.SaveCredentialsFile("{{ credentials_path }}")
+
 drive = GoogleDrive(gauth)
 
 # List of files to be uploaded with their IDs, filenames, and full paths
