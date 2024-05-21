@@ -26,11 +26,12 @@
         mode: '0755'
       changed_when: false 
 
-    - name: Copy settings.yaml to wordpress server
-      ansible.builtin.copy:
-        src: settings.yaml
-        dest: "{{ compose_project_dir }}/Pydrive/"
-      changed_when: false  
+    - name: Create PyDrive settings file from template
+      ansible.builtin.template:
+        src: pydrive_settings.j2
+        dest: "{{ compose_project_dir }}/Pydrive/settings.yaml"
+        mode: '0644'
+      changed_when: false 
 
 #    - name: Decrypt client_secrets.json
 #      delegate_to: localhost
