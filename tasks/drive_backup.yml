@@ -33,19 +33,10 @@
         mode: '0755'
       changed_when: false 
 
-#    - name: Decrypt client_secrets.json
-#      delegate_to: localhost
-#      ansible.builtin.command: ansible-vault decrypt "client_secrets.json" --output "/home/vagrant/Pydrive/client_secrets.json" --vault-password '{{ google_drive_secret_key }}'
-#      changed_when: false
-
-#    - name: Copy credentials.txt to wordpress server
-#      delegate_to: localhost
-#      environment:
-#        ANSIBLE_VAULT_PASSWORD: "{{ google_drive_credentials_key }}"
-#      ansible.builtin.copy:
-#        src: credentials.txt
-#        dest: "{{ compose_project_dir }}/Pydrive/credentials.txt"
-#        decrypt: yes
+    - name: Generate credentials.txt from template
+      ansible.builtin.template:
+        src: credentials.txt.j2
+        dest: "{{ compose_project_dir }}/Pydrive/credentials.txt"
 
 #    - name: Copy client_secrets.json to wordpress server
 #      environment:
