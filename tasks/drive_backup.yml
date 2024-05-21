@@ -23,7 +23,7 @@
       ansible.builtin.template:
         src: backup.py.j2
         dest: "{{ compose_project_dir }}/Pydrive/backup.py"
-      mode: '0755'
+        mode: '0755'
       changed_when: false 
 
     - name: Copy settings.yaml to wordpress server
