@@ -17,16 +17,10 @@
 
     - name: Create Pydrive folder
       ansible.builtin.command: mkdir -p "{{ compose_project_dir }}/Pydrive"
-      changed_when: false
-
-    - name: Copy python script to wordpress server
-      ansible.builtin.copy:
-        src: backup.py
-        dest: "{{ compose_project_dir }}/Pydrive/"
       changed_when: false 
 
     - name: Create backup script from template
-      ansible.builtintemplate:
+      ansible.builtin.template:
         src: backup.py.j2
         dest: "{{ compose_project_dir }}/Pydrive/backup.py"
       mode: '0755'
