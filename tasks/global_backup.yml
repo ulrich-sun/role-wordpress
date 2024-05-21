@@ -23,6 +23,11 @@
         - Global_backup_db
       changed_when: false
 
+    - name: Pause for 5 seconds
+      ansible.builtin.command:
+        cmd: sleep 5
+      changed_when: false
+
     - name: Backup entire WordPress site without backup_file_name
       ansible.builtin.command: sh -c "cp {{ wordpress_site }}/{{ compose_project_dir }}/global_backup_site/{{ backup_file_name }} {{ wordpress_site }}/{{ compose_project_dir }}/global_backup_site/{{ wp_frontend }}"
       #notify:
