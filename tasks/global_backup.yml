@@ -17,14 +17,14 @@
         backup_file_name: "backup_{{ timestamp }}_{{ site_name }}_{{ unique_id }}_global.zip"
 
     - name: Backup entire WordPress site with backup_file_name
-      ansible.builtin.command: sh -c "cp {{ wordpress_site }}/{{ compose_project_dir }}/global_backup_site/{{ backup_file_name }} {{ wordpress_site }}/{{ compose_project_dir }}/global_backup_site/{{ 'wp-frontend' }}"
+      ansible.builtin.command: sh -c "cd {{ wordpress_site }} &&  zip -r {{ compose_project_dir }}/global_backup_site/{{ backup_file_name }} . -x \*uploads\*"
       notify:
        # - S3_backup_site_handler
         - Global_backup_db
       changed_when: false
 
     - name: Backup entire WordPress site without backup_file_name
-      ansible.builtin.command: sh -c "cp {{ wordpress_site }}/{{ compose_project_dir }}/global_backup_site/{{ backup_file_name }} {{ wordpress_site }}/{{ compose_project_dir }}/global_backup_site/{{ wp-frontend }}"
+      ansible.builtin.command: sh -c "cp {{ wordpress_site }}/{{ compose_project_dir }}/global_backup_site/{{ backup_file_name }} {{ wordpress_site }}/{{ compose_project_dir }}/global_backup_site/{{ wp_frontend }}"
       #notify:
        # - S3_backup_site_handler
        # - Global_backup_db
