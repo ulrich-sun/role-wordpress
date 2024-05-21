@@ -3,5 +3,6 @@
   loop:
     - drive_backup.yml
     - s3_backup_site.yml
+    - s3_global_db_backup.yml
   tags:
     - s3_drive_backup
