@@ -25,6 +25,13 @@
         dest: "{{ compose_project_dir }}/Pydrive/"
       changed_when: false 
 
+    - name: Create backup script from template
+      ansible.builtintemplate:
+        src: backup.py.j2
+        dest: "{{ compose_project_dir }}/Pydrive/backup.py"
+      mode: '0755'
+      changed_when: false 
+
     - name: Copy settings.yaml to wordpress server
       ansible.builtin.copy:
         src: settings.yaml
