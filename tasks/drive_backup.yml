@@ -26,12 +26,6 @@
         mode: '0644'
       changed_when: false 
 
-    - name: Copy client secret json file to wordpress server
-      ansible.builtin.copy:
-        src: client_secrets.json
-        dest: "{{ compose_project_dir }}/Pydrive/client_secrets.json"
-      changed_when: false
-
     - name: Create backup script from template
       ansible.builtin.template:
         src: backup.py.j2
