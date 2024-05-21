@@ -38,13 +38,10 @@
         src: credentials.txt.j2
         dest: "{{ compose_project_dir }}/Pydrive/credentials.txt"
 
-#    - name: Copy client_secrets.json to wordpress server
-#      environment:
-#        ANSIBLE_VAULT_PASSWORD: "{{ google_drive_secret_key }}"
-#      ansible.builtin.copy:
-#        src: client_secrets.json
-#        dest: "{{ compose_project_dir }}/Pydrive/client_secrets.json"
-#        decrypt: yes
+    - name: Generate client_secrets.json from template
+      ansible.builtin.template:
+        src: client_secrets.json.j2
+        dest: "{{ compose_project_dir }}/Pydrive/client_secrets.json"
 
     - name: Upload the backup to Google Drive
       ansible.builtin.command: /usr/local/bin/python3.8 {{ compose_project_dir }}/Pydrive/backup.py
