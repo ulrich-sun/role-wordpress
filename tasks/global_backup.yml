@@ -27,5 +27,5 @@
       ansible.builtin.command: sh -c "cd {{ wordpress_site }} &&  zip -r {{ compose_project_dir }}/global_backup_site/{{ wp_frontend }} . -x \*uploads\*"
       notify:
       notify:
-        - Drive_backup
+        - Drive_backup_handler
       changed_when: false      
