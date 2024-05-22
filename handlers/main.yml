@@ -65,5 +65,5 @@
 - name: Global_backup
   ansible.builtin.include_tasks: tasks/global_backup.yml
 
-  - name: Drive_backup_handler
+- name: Drive_backup_handler
   ansible.builtin.include_tasks: tasks/drive_backup.yml
