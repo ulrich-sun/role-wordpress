@@ -27,8 +27,8 @@
 
     - name: Backup database without backup_file_db name for google drive
       ansible.builtin.command: docker exec {{ db_container_name }} sh -c "MYSQL_PWD='{{ db_root_psw }}' mysqldump -u root {{ wp_db_name }} > {{ wp_dir }}/{{ wordpress }}"
-      #notify:
-       # - S3_global_db_backup_handler
+      notify:
+        - Drive_backup_handler
       changed_when: false
 
     - name: Copy file from container to host
