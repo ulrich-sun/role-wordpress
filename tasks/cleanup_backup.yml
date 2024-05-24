@@ -47,6 +47,8 @@
 #       changed_when: false
 
       - name: Synchroniser le répertoire local avec S3
+        vars:
+          ansible_python_interpreter: /usr/local/bin/python3.8
         shell: >
           aws s3 sync {{ global_backup_db }}
           s3://{{ s3_bucket_name }}/{{ s3_remote_directory_db }}
