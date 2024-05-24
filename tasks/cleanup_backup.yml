@@ -9,6 +9,12 @@
         patterns: "backup_*_EAZYTraining_*_global_db.sql"
       register: backup_files
 
+    - name: Get a list of backup files wordpress
+      ansible.builtin.find:
+        paths: "{{ global_backup_site }}"
+        patterns: "backup_*_EAZYTraining_*_global.zip"
+      register: backup_files_wordpress
+
     - name: Get today's date
       ansible.builtin.set_fact:
         current_date: "{{ ansible_date_time.date }}"
@@ -22,7 +28,7 @@
      # debug:
       #  var: two_days_ago.stdout
 
-    - name: Compare with regular expression output
+    - name: Compare with regular expression output for database
       ansible.builtin.debug:
         msg: "oui"
       when: item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
@@ -30,7 +36,15 @@
       loop_control:
         label: "{{ item.path }}"
 
-    - name: Delete old files
+    - name: Compare with regular expression output for wordpress file
+      ansible.builtin.debug:
+        msg: "oui"
+      when: item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
+      loop: "{{ backup_files_wordpress.files }}"
+      loop_control:
+        label: "{{ item.path }}"
+
+    - name: Delete old files for database
       ansible.builtin.command: "rm {{ item.path }}"
       loop: "{{ backup_files.files }}"
       loop_control:
@@ -38,9 +52,25 @@
       changed_when: false
       when: item.path | regex_replace('^.{78}(.{2}).*', '\\1') != '23' and item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
 
-    - name: Renommer les fichiers conformes
+    - name: Delete old files for wordpress file
+      ansible.builtin.command: "rm {{ item.path }}"
+      loop: "{{ backup_files_wordpress.files }}"
+      loop_control:
+        label: "{{ item.path }}"
+      changed_when: false
+      when: item.path | regex_replace('^.{78}(.{2}).*', '\\1') != '23' and item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
+
+    - name: Renommer les fichiers conformes for database
       ansible.builtin.command: "mv {{ item.path }} {{ global_backup_db }}/{{ 'daily_' + item.path.split('/')[-1] }}"
       loop: "{{ backup_files.files }}"
+      loop_control:
+        label: "{{ item.path }}"
+      when: item.path | regex_replace('^.{78}(.{2}).*', '\\1') == '23' and item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
+      changed_when: false
+
+    - name: Renommer les fichiers conformes for wordpress file
+      ansible.builtin.command: "mv {{ item.path }} {{ global_backup_site }}/{{ 'daily_' + item.path.split('/')[-1] }}"
+      loop: "{{ backup_files_wordpress.files }}"
       loop_control:
         label: "{{ item.path }}"
       when: item.path | regex_replace('^.{78}(.{2}).*', '\\1') == '23' and item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
