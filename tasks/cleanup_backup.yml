@@ -45,16 +45,12 @@
 #         label: "{{ item.path }}"
 #       when: item.path | regex_replace('^.{78}(.{2}).*', '\\1') == '23' and item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
 #       changed_when: false
-      - name: Synchroniser le répertoire local avec S3
-        vars:
-          ansible_python_interpreter: /usr/local/bin/python3.8
-        command: whereis aws
-        
+
       - name: Synchroniser le répertoire local avec S3
         vars:
           ansible_python_interpreter: /usr/local/bin/python3.8
         command: >
-          /usr/local/bin/aws-cli s3 sync {{ global_backup_db }}
+          /usr/bin/aws-cli s3 sync {{ global_backup_db }}
           s3://{{ s3_bucket_name }}/{{ s3_remote_directory_db }}
           --delete
         environment:
