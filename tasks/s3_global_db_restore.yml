@@ -3,22 +3,38 @@
   tags:
     - restore_db_s3
   block:
+    - name: install aws cli for python3.8
+      vars:
+        ansible_python_interpreter: /usr/local/bin/python3.8
+      ansible.builtin.command: "/usr/local/bin/python3.8 -m pip install awscli"
+
     - name: Install botocore and boto3 using pip3.8
       ansible.builtin.command: /usr/local/bin/pip3.8 install botocore boto3
       vars:
         ansible_python_interpreter: /usr/local/bin/python3.8
       changed_when: false
-    - name: Synchroniser le répertoire local avec S3
+
+    - name: Télécharger la base de données depuis S3
       vars:
         ansible_python_interpreter: /usr/local/bin/python3.8
-      aws_s3:
-        bucket: "{{ s3_bucket_name }}"
-        object: "{{ s3_remote_directory_db }}/{{ s3_filename_db }}"
-        dest: "{{ compose_project_dir }}/s3_db_restore/{{ s3_filename_db }}"
-        mode: get
-        secret_key: "{{ aws_secret_key }}"
-        access_key: "{{ aws_access_key }}"
-        region: "{{ region }}"
+      ansible.builtin.command: "/usr/local/bin/aws s3 cp s3://{{ s3_bucket_name }}/{{ s3_remote_directory_db }}/{{ s3_filename_db }} {{ compose_project_dir }}/s3_db_restore/{{ s3_filename_db }}"
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_DEFAULT_REGION: "{{ region }}"
+      changed_when: false
+      
+    # - name: download database from S3
+    #   vars:
+    #     ansible_python_interpreter: /usr/local/bin/python3.8
+    #   aws_s3:
+    #     bucket: "{{ s3_bucket_name }}"
+    #     object: "{{ s3_remote_directory_db }}/{{ s3_filename_db }}"
+    #     dest: "{{ compose_project_dir }}/s3_db_restore/{{ s3_filename_db }}"
+    #     mode: get
+    #     secret_key: "{{ aws_secret_key }}"
+    #     access_key: "{{ aws_access_key }}"
+    #     region: "{{ region }}"
 
     - name: Supprimer le conteneur Docker site-vitrine-db s'il existe
       ansible.builtin.shell: docker stop {{ db_container_name }} && docker rm  {{ db_container_name }}
