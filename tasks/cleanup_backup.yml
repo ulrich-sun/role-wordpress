@@ -76,13 +76,37 @@
       when: item.path | regex_replace('^.{78}(.{2}).*', '\\1') == '23' and item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
       changed_when: false
 
-    - name: Synchroniser le répertoire local avec S3
+    # - name: Synchroniser le répertoire local avec S3
+    #   vars:
+    #     ansible_python_interpreter: /usr/local/bin/python3.8
+    #   s3_sync:
+    #     bucket: "{{ s3_bucket_name }}"
+    #     file_root: "{{ global_backup_db }}"
+    #     delete: yes
+    #     secret_key: "{{ aws_secret_key }}"
+    #     access_key: "{{ aws_access_key }}"
+    #     key_prefix: "{{ s3_remote_directory_db }}"
+
+
+    - name: install aws cli for python3.8
       vars:
         ansible_python_interpreter: /usr/local/bin/python3.8
-      s3_sync:
-        bucket: "{{ s3_bucket_name }}"
-        file_root: "{{ global_backup_db }}"
-        delete: yes
-        secret_key: "{{ aws_secret_key }}"
-        access_key: "{{ aws_access_key }}"
-        key_prefix: "{{ s3_remote_directory_db }}"
+      ansible.builtin.command: "/usr/local/bin/python3.8 -m pip install awscli"
+
+    - name: Synchroniser le répertoire local db avec S3
+      vars:
+        ansible_python_interpreter: /usr/local/bin/python3.8
+      ansible.builtin.command: "/usr/local/bin/python3.8 -m awscli s3 sync {{ global_backup_db }} s3://{{ s3_bucket_name }}/{{ s3_remote_directory_db }} --delete"
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+      changed_when: false
+
+    - name: Synchroniser le répertoire local site avec S3
+      vars:
+        ansible_python_interpreter: /usr/local/bin/python3.8
+      ansible.builtin.command: "/usr/local/bin/python3.8 -m awscli s3 sync {{ global_backup_site }} s3://{{ s3_bucket_name }}/{{ s3_remote_directory_site }} --delete"
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+      changed_when: false
