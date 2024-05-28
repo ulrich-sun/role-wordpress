@@ -3,18 +3,28 @@
   tags:
     - restore_specific_plugins_s3
   block:
-    - name: Synchroniser le répertoire local avec S3
+    # - name: Synchroniser le répertoire local avec S3
+    #   vars:
+    #     ansible_python_interpreter: /usr/local/bin/python3.8
+    #   aws_s3:
+    #     bucket: "{{ s3_bucket_name }}"
+    #     object: "{{ s3_remote_directory_specific_plugins }}/{{ s3_filename_specific_plugins }}"
+    #     dest: "{{ compose_project_dir }}/s3_specific_plugin_restore/{{ s3_filename_specific_plugins }}"
+    #     mode: get
+    #     secret_key: "{{ aws_secret_key }}"
+    #     access_key: "{{ aws_access_key }}"
+    #     region: "{{ region }}"
+        
+    - name: Télécharger du plugin specifique depuis S3
       vars:
         ansible_python_interpreter: /usr/local/bin/python3.8
-      aws_s3:
-        bucket: "{{ s3_bucket_name }}"
-        object: "{{ s3_remote_directory_specific_plugins }}/{{ s3_filename_specific_plugins }}"
-        dest: "{{ compose_project_dir }}/s3_specific_plugin_restore/{{ s3_filename_specific_plugins }}"
-        mode: get
-        secret_key: "{{ aws_secret_key }}"
-        access_key: "{{ aws_access_key }}"
-        region: "{{ region }}"
-
+      ansible.builtin.command: "/usr/local/bin/aws s3 cp s3://{{ s3_bucket_name }}/{{ s3_remote_directory_specific_plugins }}/{{ s3_filename_specific_plugins }} {{ compose_project_dir }}/{{ s3_specific_plugin_restore }}/{{ s3_filename_specific_plugins }}"
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_DEFAULT_REGION: "{{ region }}"
+      changed_when: false
+      
     - name: Extraire le fichier ZIP du plugin
       ansible.builtin.command: sh -c " unzip -o {{ s3_specific_plugin_name_restore.restore_files_path }}/{{ s3_specific_plugin_name_restore.restore_pattern }} -d unzip_folder/"
       changed_when: false  # Indicate that the task should not be considered as having changed anything
