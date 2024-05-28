@@ -19,7 +19,7 @@
     - name: Synchroniser le répertoire local site avec S3
       vars:
         ansible_python_interpreter: /usr/local/bin/python3.8
-      ansible.builtin.command: "/usr/local/bin/python3.8 -m awscli s3 sync {{ global_backup_site }} s3://{{ s3_bucket_name }}/{{ s3_remote_directory_site }} --delete"
+      ansible.builtin.command: "/usr/local/bin/python3.8 -m awscli s3 sync {{ global_backup_site }} s3://{{ s3_bucket_name }}/{{ s3_remote_directory_site }}"
       environment:
         AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
