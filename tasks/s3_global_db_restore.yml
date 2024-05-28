@@ -17,7 +17,7 @@
     - name: Télécharger la base de données depuis S3
       vars:
         ansible_python_interpreter: /usr/local/bin/python3.8
-      ansible.builtin.command: "/usr/local/bin/aws s3 cp s3://{{ s3_bucket_name }}/{{ s3_remote_directory_db }}/{{ s3_filename_db }} {{ compose_project_dir }}/s3_db_restore/{{ s3_filename_db }}"
+      ansible.builtin.command: "/usr/local/bin/aws s3 cp s3://{{ s3_bucket_name }}/{{ s3_remote_directory_db }}/{{ s3_filename_db }} {{ compose_project_dir }}/{{ s3_db_restore }}/{{ s3_filename_db }}"
       environment:
         AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
