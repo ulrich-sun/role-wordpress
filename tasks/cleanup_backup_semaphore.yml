@@ -1,31 +1,31 @@
 - name: Renommer le fichier de backup avec le mois en cours
   tags:
     - cleanup_backup_semaphore
-  tasks:
-    - name: Get the current date in UTC
-      ansible.builtin.command: date -u +"%Y-%m-%d"
-      register: current_date
 
-    - name: Get the current month in UTC
-      ansible.builtin.command: date -u +"%B"
-      register: current_month
+  - name: Get the current date in UTC
+    ansible.builtin.command: date -u +"%Y-%m-%d"
+    register: current_date
 
-    - name: List files in S3 bucket
-      ansible.builtin.command: >
-        aws s3 ls s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/ --recursive
-      register: s3_files
+  - name: Get the current month in UTC
+    ansible.builtin.command: date -u +"%B"
+    register: current_month
 
-    - name: Filter files to retain
-      ansible.builtin.set_fact:
-        files_to_retain: >
-          {{ s3_files.stdout_lines | select('match', 'backup_') | select('search', current_date.stdout) | list }}
+  - name: List files in S3 bucket
+    ansible.builtin.command: >
+      aws s3 ls s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/ --recursive
+    register: s3_files
 
-    - name: Debug files to retain
-      ansible.builtin.debug:
-        var: files_to_retain
+  - name: Filter files to retain
+    ansible.builtin.set_fact:
+      files_to_retain: >
+        {{ s3_files.stdout_lines | select('match', 'backup_') | select('search', current_date.stdout) | list }}
 
-    - name: Rename the retained file
-      ansible.builtin.command: >
-        aws s3 mv s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ item.split()[-1] }} s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ current_month.stdout }}_{{ item.split()[-1] }}
-      with_items: "{{ files_to_retain }}"
-      when: files_to_retain | length > 0
+  - name: Debug files to retain
+    ansible.builtin.debug:
+      var: files_to_retain
+
+  - name: Rename the retained file
+    ansible.builtin.command: >
+      aws s3 mv s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ item.split()[-1] }} s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ current_month.stdout }}_{{ item.split()[-1] }}
+    with_items: "{{ files_to_retain }}"
+    when: files_to_retain | length > 0
