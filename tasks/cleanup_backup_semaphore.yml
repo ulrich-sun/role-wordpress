@@ -21,7 +21,7 @@
     - name: Filter files to retain
       ansible.builtin.set_fact:
         files_to_retain: >
-          {{ s3_files.stdout_lines | select('match', 'backup_') | select('search', current_date.stdout) | list }}
+          {{ s3_files.stdout_lines | select('match', 'backup_') | select('search', current_date.stdout) | map('regex_replace', '.*bd_semaphore/(.*)', '\\1') | list }}
 
     - name: Debug files to retain
       ansible.builtin.debug:
@@ -29,9 +29,9 @@
 
     - name: Rename the retained file
       ansible.builtin.command: >
-        /usr/local/bin/python3.8 -m awscli s3 mv s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ item.split()[-1] }} s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ current_month.stdout }}_{{ item.split()[-1] }}
+        /usr/local/bin/python3.8 -m awscli s3 mv s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ item }} s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ current_month.stdout }}_{{ item }}
       with_items: "{{ files_to_retain }}"
       when: files_to_retain | length > 0
       environment:
         AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
-        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}
