@@ -23,15 +23,31 @@
         files_to_retain: >
           {{ s3_files.stdout_lines | select('match', 'backup_') | select('search', current_date.stdout) | map('regex_replace', '.*bd_semaphore/(.*)', '\\1') | list }}
 
-    - name: Debug files to retain
-      ansible.builtin.debug:
-        var: files_to_retain
 
-    - name: Rename the retained file
+    - name: Filter and sort backup files
+      ansible.builtin.set_fact:
+        backup_files: >
+          {{ s3_files.stdout_lines | select('match', 'backup_') | map('regex_replace', '.*bd_semaphore/(.*)', '\\1') | sort(attribute='split("_")[1]') | list }}
+        most_recent_backup: >
+          {{ backup_files | last }}
+
+    - name: Debug most recent backup file
+      ansible.builtin.debug:
+        var: most_recent_backup
+
+    - name: Delete old backup files
       ansible.builtin.command: >
-        /usr/local/bin/python3.8 -m awscli s3 mv s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ item }} s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ current_month.stdout }}_{{ item }}
-      with_items: "{{ files_to_retain }}"
-      when: files_to_retain | length > 0
+        /usr/local/bin/python3.8 -m awscli s3 rm s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ item }}
+      with_items: "{{ backup_files }}"
+      when: item != most_recent_backup
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+
+    - name: Rename the most recent backup file
+      ansible.builtin.command: >
+        /usr/local/bin/python3.8 -m awscli s3 mv s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ most_recent_backup }} s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ current_month.stdout }}_{{ most_recent_backup }}
+      when: most_recent_backup is defined
       environment:
         AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
