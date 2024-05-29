@@ -12,7 +12,7 @@
 
     - name: List files in S3 bucket
       ansible.builtin.command: >
-        aws s3 ls s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/ --recursive
+        /usr/local/bin/python3.8 -m awscli s3 ls s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/ --recursive
       register: s3_files
 
     - name: Filter files to retain
@@ -26,6 +26,6 @@
 
     - name: Rename the retained file
       ansible.builtin.command: >
-        aws s3 mv s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ item.split()[-1] }} s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ current_month.stdout }}_{{ item.split()[-1] }}
+        /usr/local/bin/python3.8 -m awscli s3 mv s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ item.split()[-1] }} s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ current_month.stdout }}_{{ item.split()[-1] }}
       with_items: "{{ files_to_retain }}"
       when: files_to_retain | length > 0
