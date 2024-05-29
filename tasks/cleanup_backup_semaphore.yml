@@ -12,21 +12,33 @@
 
     - name: List files in S3 bucket
       ansible.builtin.command: >
-        /usr/local/bin/python3.8 -m awscli s3 ls s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/ --recursive
+        aws s3 ls s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/ --recursive
       register: s3_files
       environment:
         AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
 
+    - name: Debug list files in S3 bucket
+      ansible.builtin.debug:
+        var: s3_files.stdout_lines
+
     - name: Filter and extract backup files
       ansible.builtin.set_fact:
         backup_files: >
-          {{ s3_files.stdout_lines | select('match', 'backup_') | map('regex_replace', '.*bd_semaphore/(.*)', '\\1') | list }}
+          {{ s3_files.stdout_lines | select('search', 'backup_') | map('regex_replace', '.*bd_semaphore/(backup_.*)', '\\1') | list }}
+
+    - name: Debug filtered backup files
+      ansible.builtin.debug:
+        var: backup_files
 
     - name: Sort backup files by date
       ansible.builtin.set_fact:
         sorted_backup_files: "{{ backup_files | sort(attribute='split(\"_\")[1]') }}"
-        most_recent_backup: "{{ sorted_backup_files | last }}"
+        most_recent_backup: "{{ sorted_backup_files[-1] }}"
+
+    - name: Debug sorted backup files
+      ansible.builtin.debug:
+        var: sorted_backup_files
 
     - name: Debug most recent backup file
       ansible.builtin.debug:
@@ -34,16 +46,16 @@
 
     - name: Delete old backup files
       ansible.builtin.command: >
-        /usr/local/bin/python3.8 -m awscli s3 rm s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ item }}
-      with_items: "{{ backup_files }}"
-      when: item != most_recent_backup
+        aws s3 rm s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ item }}
+      with_items: "{{ sorted_backup_files[:-1] }}"
+      when: sorted_backup_files | length > 1
       environment:
         AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
 
     - name: Rename the most recent backup file
       ansible.builtin.command: >
-        /usr/local/bin/python3.8 -m awscli s3 mv s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ most_recent_backup }} s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ current_month.stdout }}_{{ most_recent_backup }}
+        aws s3 mv s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ most_recent_backup }} s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ current_month.stdout }}_{{ most_recent_backup }}
       when: most_recent_backup is defined
       environment:
         AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
