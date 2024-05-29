@@ -201,7 +201,7 @@
   tags:
     - cleanup_backup
     
-- name: Cleanup_backup local
+- name: Cleanup_backup semaphore
   ansible.builtin.include_tasks: cleanup_backup_semaphore.yml
   tags:
     - cleanup_backup_semaphore
