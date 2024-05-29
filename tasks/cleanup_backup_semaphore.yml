@@ -1,7 +1,7 @@
 - name: Renommer le fichier de backup avec le mois en cours
   tags:
     - cleanup_backup_semaphore
-  tasks:
+  block:
     - name: Get the current date in UTC
       ansible.builtin.command: date -u +"%Y-%m-%d"
       register: current_date
