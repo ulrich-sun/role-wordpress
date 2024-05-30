@@ -23,6 +23,8 @@
         var: s3_files.stdout_lines
 
     - name: Filter and extract backup files
+      vars:
+        ansible_python_interpreter: /usr/local/bin/python3.8
       ansible.builtin.set_fact:
         backup_files: >
           {{ s3_files.stdout_lines | select('search', 'backup_') | map('split', ' ') | map('last') | list }}
@@ -32,6 +34,8 @@
         var: backup_files
 
     - name: Extract dates from backup files
+      vars:
+        ansible_python_interpreter: /usr/local/bin/python3.8
       ansible.builtin.set_fact:
         backup_files_with_dates: >
           {{
@@ -43,6 +47,8 @@
         var: backup_files_with_dates
 
     - name: Sort backup files by date
+      vars:
+        ansible_python_interpreter: /usr/local/bin/python3.8
       ansible.builtin.set_fact:
         sorted_backup_files: "{{ backup_files_with_dates | sort(attribute='date') | map(attribute='file') }}"
         most_recent_backup: "{{ sorted_backup_files[-1] }}"
