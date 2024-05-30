@@ -30,7 +30,7 @@
   block:
     - name: Backuper avant Mise à jour de WordPress avec WP-CLI
       ansible.builtin.command: /usr/local/bin/wp core version --allow-root --ssh=docker:{{ wordpress_container_name }}
-      changed_when: false
+      failed_when: false
       notify:
         - Global_backup
 
