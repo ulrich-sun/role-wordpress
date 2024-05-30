@@ -10,7 +10,7 @@
         - Backup_plugin_handler
         - Activate_plugin_update
         - Activate_plugin_malcare-security_update
-      changed_when: false  # Indicate that the task should not be considered as having changed anything
+      failed_when: false  # Indicate that the task should not be considered as having changed anything
 
     - name: "Flush handlers backup and activate rights of plugins"
       ansible.builtin.meta: flush_handlers
@@ -29,7 +29,7 @@
       notify:
         - Deactivate_plugin_update
         - Activate_plugin_malcare-security_update
-      changed_when: false  # Indicate that the task should not be considered as having changed anything
+      failed_when: false  # Indicate that the task should not be considered as having changed anything
 
     - name: Récupérer les plugins installés après la mise à jour
       ansible.builtin.command: /usr/local/bin/wp plugin list --format=json --allow-root --ssh=docker:{{ wordpress_container_name }}
