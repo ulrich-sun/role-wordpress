@@ -18,16 +18,21 @@
         AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
 
-    - name: Filter and extract backup files with dates
+    - name: Extract backup files with dates
       ansible.builtin.set_fact:
-        backup_files: >
-          {{ s3_files.stdout_lines | select('search', 'backup_') | map('extract_date', '^.{67}(.{10}).*', '\\1') | list }}
-      vars:
-        extract_date: "regex_replace"
+        backup_files: "{{ s3_files.stdout_lines | select('search', 'backup_') | map('regex_replace', '.*backup_(.*)', '\\1') | list }}"
+
+    - name: Extract dates from backup files
+      ansible.builtin.set_fact:
+        backup_files_with_dates: "{{ backup_files | map('regex_search', '^.{67}(.{10})') | list }}"
+
+    - name: Combine dates with filenames
+      ansible.builtin.set_fact:
+        backup_files_combined: "{{ backup_files | zip(backup_files_with_dates) | map('join', ' ') | list }}"
 
     - name: Sort backup files by date
       ansible.builtin.set_fact:
-        sorted_backup_files: "{{ backup_files | sort(reverse=True) }}"
+        sorted_backup_files: "{{ backup_files_combined | sort(reverse=True) | map('split', ' ') | map('last') | list }}"
 
     - name: Debug sorted backup files
       ansible.builtin.debug:
@@ -40,7 +45,7 @@
     - name: Debug most recent backup file
       ansible.builtin.debug:
         var: most_recent_backup
-
+        
     - name: Delete old backup files
       ansible.builtin.shell: |
         for file in {{ sorted_backup_files[1:] | join(' ') }}; do
