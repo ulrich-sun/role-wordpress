@@ -18,23 +18,24 @@
         AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
 
-    - name: Extract and sort backup files by date
-      ansible.builtin.shell: |
-        echo "{{ s3_files.stdout_lines | join('\n') }}" | \
-        grep 'backup_' | \
-        awk '{print $4}' | \
-        sed 's/^.{67}\(.\{10\}\).*/\1 \0/' | \
-        sort -r | \
-        awk '{print $2}'
-      register: sorted_backup_files
+    - name: Filter and extract backup files with dates
+      ansible.builtin.set_fact:
+        backup_files: >
+          {{ s3_files.stdout_lines | select('search', 'backup_') | map('extract_date', '^.{67}(.{10}).*', '\\1') | list }}
+      vars:
+        extract_date: "regex_replace"
+
+    - name: Sort backup files by date
+      ansible.builtin.set_fact:
+        sorted_backup_files: "{{ backup_files | sort(reverse=True) }}"
 
     - name: Debug sorted backup files
       ansible.builtin.debug:
-        var: sorted_backup_files.stdout_lines
+        var: sorted_backup_files
 
     - name: Set most recent backup file
       ansible.builtin.set_fact:
-        most_recent_backup: "{{ sorted_backup_files.stdout_lines[0] }}"
+        most_recent_backup: "{{ sorted_backup_files[0] }}"
 
     - name: Debug most recent backup file
       ansible.builtin.debug:
@@ -42,10 +43,10 @@
 
     - name: Delete old backup files
       ansible.builtin.shell: |
-        for file in {{ sorted_backup_files.stdout_lines[1:] | join(' ') }}; do
+        for file in {{ sorted_backup_files[1:] | join(' ') }}; do
           /usr/local/bin/python3.8 -m awscli s3 rm s3://{{ s3_bucket_name }}/$file;
         done
-      when: sorted_backup_files.stdout_lines | length > 1
+      when: sorted_backup_files | length > 1
       environment:
         AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
