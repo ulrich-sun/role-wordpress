@@ -25,7 +25,7 @@
     - name: Filter and extract backup files
       ansible.builtin.set_fact:
         backup_files: >
-          {{ s3_files.stdout_lines | select('search', 'backup_') | map('regex_replace', '.*backup_(.*)', 'backup_\\1') | list }}
+          {{ s3_files.stdout_lines | select('search', 'backup_') | map('split', ' ') | map('last') | list }}
 
     - name: Debug filtered backup files
       ansible.builtin.debug:
