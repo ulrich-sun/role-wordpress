@@ -7,7 +7,7 @@
       ansible.builtin.command: /usr/local/bin/wp theme list --format=json --allow-root --ssh=docker:{{ wordpress_container_name }}
       register: installed_themes_before_update
       notify: Backup_theme_handler
-      changed_when: false  # Indicate that the task should not be considered as having changed anything
+      failed_when: false  # Indicate that the task should not be considered as having changed anything
 
     - name: "Flush handlers backup and activate rights of plugins"
       ansible.builtin.meta: flush_handlers
