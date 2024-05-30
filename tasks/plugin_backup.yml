@@ -41,4 +41,4 @@
         loop_var: plugin
       notify:
         - S3_global_plugins_backup_handler
-      changed_when: false  # Set changed_when to false to indicate no change when nothing needs doing
+      failed_when: false  
