@@ -31,9 +31,20 @@
       ansible.builtin.debug:
         var: backup_files
 
+    - name: Extract dates from backup files
+      ansible.builtin.set_fact:
+        backup_files_with_dates: >
+          {{
+            backup_files | map('extract_date') | list
+          }}
+
+    - name: Debug backup files with dates
+      ansible.builtin.debug:
+        var: backup_files_with_dates
+
     - name: Sort backup files by date
       ansible.builtin.set_fact:
-        sorted_backup_files: "{{ backup_files | sort(attribute='split(\"_\")[1]') }}"
+        sorted_backup_files: "{{ backup_files_with_dates | sort(attribute='date') | map(attribute='file') }}"
         most_recent_backup: "{{ sorted_backup_files[-1] }}"
 
     - name: Debug sorted backup files
