@@ -57,7 +57,7 @@
       loop: "{{ backup_files_wordpress.files }}"
       loop_control:
         label: "{{ item.path }}"
-      #changed_when: false
+      changed_when: false
       when: item.path | regex_replace('^.{78}(.{2}).*', '\\1') != '02' and item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
 
     - name: Renommer les fichiers conformes for database
