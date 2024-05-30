@@ -28,7 +28,7 @@
       ansible.builtin.command: sudo cp {{ wp_dir }}/{{ plugin_to_update.plugin_name }}/{{ backup_file_name }} {{ specific_backup_plugins }}
       notify:
         - S3_specific_plugins_backup_handler
-      failed_when: false  # Indicate that the task should not be considered as having changed anything
+      change_when: false  # Indicate that the task should not be considered as having changed anything
 
     - name: Remove backup file from the WordPress folder
       ansible.builtin.command: sudo rm -f {{ wp_dir }}/{{ plugin_to_update.plugin_name }}/{{ backup_file_name }}
