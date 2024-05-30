@@ -55,7 +55,7 @@
 
     - name: Rename the most recent backup file
       ansible.builtin.command: >
-        /usr/local/bin/python3.8 -m awscli s3 mv s3://{{ s3_bucket_name }}/{{ most_recent_backup }} s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ current_month.stdout }}_{{ most_recent_backup.split('/')[-1] }}
+        /usr/local/bin/python3.8 -m awscli s3 mv s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ most_recent_backup }} s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ current_month.stdout }}_{{ most_recent_backup.split('/')[-1] }}
       when: most_recent_backup is defined
       environment:
         AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
