@@ -22,50 +22,29 @@
       ansible.builtin.debug:
         var: s3_files.stdout_lines
 
-    - name: Filter and extract backup files
-      vars:
-        ansible_python_interpreter: /usr/local/bin/python3.8
-      ansible.builtin.set_fact:
-        backup_files: >
-          {{ s3_files.stdout_lines | select('search', 'backup_') | map('split', ' ') | map('last') | list }}
-
-    - name: Debug filtered backup files
-      ansible.builtin.debug:
-        var: backup_files
-
-    - name: Extract dates from backup files
-      vars:
-        ansible_python_interpreter: /usr/local/bin/python3.8
-      ansible.builtin.set_fact:
-        backup_files_with_dates: >
-          {{
-            backup_files | map('extract_date') | list
-          }}
-
-    - name: Debug backup files with dates
-      ansible.builtin.debug:
-        var: backup_files_with_dates
-
-    - name: Sort backup files by date
-      vars:
-        ansible_python_interpreter: /usr/local/bin/python3.8
-      ansible.builtin.set_fact:
-        sorted_backup_files: "{{ backup_files_with_dates | sort(attribute='date') | map(attribute='file') }}"
-        most_recent_backup: "{{ sorted_backup_files[-1] }}"
+    - name: Extract and sort backup files by date
+      ansible.builtin.shell: |
+        echo "{{ s3_files.stdout_lines | join('\n') }}" | grep 'backup_' | awk '{print $4}' | sort -t'_' -k2
+      register: sorted_backup_files
 
     - name: Debug sorted backup files
       ansible.builtin.debug:
-        var: sorted_backup_files
+        var: sorted_backup_files.stdout_lines
+
+    - name: Set most recent backup file
+      ansible.builtin.set_fact:
+        most_recent_backup: "{{ sorted_backup_files.stdout_lines | last }}"
 
     - name: Debug most recent backup file
       ansible.builtin.debug:
         var: most_recent_backup
 
     - name: Delete old backup files
-      ansible.builtin.command: >
-        /usr/local/bin/python3.8 -m awscli s3 rm s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ item }}
-      with_items: "{{ sorted_backup_files[:-1] }}"
-      when: sorted_backup_files | length > 1
+      ansible.builtin.shell: |
+        for file in {{ sorted_backup_files.stdout_lines[:-1] | join(' ') }}; do
+          /usr/local/bin/python3.8 -m awscli s3 rm s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/$file;
+        done
+      when: sorted_backup_files.stdout_lines | length > 1
       environment:
         AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
