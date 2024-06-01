@@ -18,7 +18,11 @@
     - name: Get today's date
       ansible.builtin.set_fact:
         current_date: "{{ ansible_date_time.date }}"
+
+    - name: to day days 
+      ansible.builtin.command: date -d "{{ current_date }}" +"%Y-%m-%d"
       register: to_day
+      changed_when: false
 
     - name: Subtract 2 days from today's date
       ansible.builtin.command: date -d "{{ current_date }} - 2 days" +"%Y-%m-%d"
