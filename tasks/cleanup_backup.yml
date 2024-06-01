@@ -58,7 +58,7 @@
       loop_control:
         label: "{{ item.path }}"
       changed_when: false
-      when: item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
+      #when: item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
 
     - name: Renommer les fichiers conformes for database
       ansible.builtin.command: "mv {{ item.path }} {{ global_backup_db }}/{{ 'daily_' + item.path.split('/')[-1] }}"
