@@ -58,7 +58,7 @@
       loop_control:
         label: "{{ item.path }}"
       changed_when: false
-      when: item.path | regex_replace('^.{78}(.{2}).*', '\\1') != '02' and item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
+      when: item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
 
     - name: Renommer les fichiers conformes for database
       ansible.builtin.command: "mv {{ item.path }} {{ global_backup_db }}/{{ 'daily_' + item.path.split('/')[-1] }}"
@@ -73,7 +73,7 @@
       loop: "{{ backup_files_wordpress.files }}"
       loop_control:
         label: "{{ item.path }}"
-      when: item.path | regex_replace('^.{78}(.{2}).*', '\\1') == '02' and item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
+      #when: item.path | regex_replace('^.{78}(.{2}).*', '\\1') == '02' and item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
       changed_when: false
 
     # - name: Synchroniser le répertoire local avec S3
