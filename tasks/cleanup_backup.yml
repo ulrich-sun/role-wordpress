@@ -19,9 +19,19 @@
       ansible.builtin.set_fact:
         current_date: "{{ ansible_date_time.date }}"
 
+    - name: to day days 
+      ansible.builtin.command: date -d "{{ current_date }}" +"%Y-%m-%d"
+      register: to_day
+      changed_when: false
+
     - name: Subtract 2 days from today's date
       ansible.builtin.command: date -d "{{ current_date }} - 2 days" +"%Y-%m-%d"
       register: two_days_ago
+      changed_when: false
+
+    - name: Subtract 1 days from today's date
+      ansible.builtin.command: date -d "{{ current_date }} - 1 days" +"%Y-%m-%d"
+      register: one_days_ago
       changed_when: false
 
     #- name: Show today's date subtracted by 2 days
@@ -58,7 +68,7 @@
       loop_control:
         label: "{{ item.path }}"
       changed_when: false
-      when: item.path | regex_replace('^.{78}(.{2}).*', '\\1') != '02' and item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
+      when: item.path | regex_replace('^.{67}(.{10}).*', '\\1') == to_day.stdout and item.path | regex_replace('^.{67}(.{10}).*', '\\1') == one_days_ago.stdout
 
     - name: Renommer les fichiers conformes for database
       ansible.builtin.command: "mv {{ item.path }} {{ global_backup_db }}/{{ 'daily_' + item.path.split('/')[-1] }}"
@@ -68,13 +78,13 @@
       when: item.path | regex_replace('^.{78}(.{2}).*', '\\1') == '23' and item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
       changed_when: false
 
-    - name: Renommer les fichiers conformes for wordpress file
-      ansible.builtin.command: "mv {{ item.path }} {{ global_backup_site }}/{{ 'daily_' + item.path.split('/')[-1] }}"
-      loop: "{{ backup_files_wordpress.files }}"
-      loop_control:
-        label: "{{ item.path }}"
-      when: item.path | regex_replace('^.{78}(.{2}).*', '\\1') == '02' and item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
-      changed_when: false
+    #- name: Renommer les fichiers conformes for wordpress file
+    #  ansible.builtin.command: "mv {{ item.path }} {{ global_backup_site }}/{{ 'daily_' + item.path.split('/')[-1] }}"
+    #  loop: "{{ backup_files_wordpress.files }}"
+    #  loop_control:
+    #    label: "{{ item.path }}"
+    #  when: item.path | regex_replace('^.{78}(.{2}).*', '\\1') == '02' and item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
+    #  changed_when: false
 
     # - name: Synchroniser le répertoire local avec S3
     #   vars:
@@ -86,7 +96,6 @@
     #     secret_key: "{{ aws_secret_key }}"
     #     access_key: "{{ aws_access_key }}"
     #     key_prefix: "{{ s3_remote_directory_db }}"
-
 
     - name: install aws cli for python3.8
       vars:
