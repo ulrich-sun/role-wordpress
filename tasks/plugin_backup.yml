@@ -23,7 +23,8 @@
         owner: "{{ system_user }}"  # Specify appropriate owner
         group: "{{ group_gid }}"    # Specify appropriate group
         mode: '0755'   # Specify appropriate permissions
-
+      changed_when: false
+      
     - name: Get plugin version using wp-cli
       ansible.builtin.command: "/usr/local/bin/wp plugin get {{ item }} --field=version --allow-root --ssh=docker:{{ wordpress_container_name }}"
       register: plugin_version_result
