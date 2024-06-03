@@ -155,12 +155,6 @@
   tags:
     - restore_db_s3
 
-- name: Backup global site to AWS S3
-  ansible.builtin.include_tasks: s3_backup_site.yml
-  when: "{{ backup }} == 's3'"
-  tags:
-    - backup_site_s3
-
 - name: Restore global site from AWS S3
   ansible.builtin.include_tasks: s3_restore_site.yml
   tags:
