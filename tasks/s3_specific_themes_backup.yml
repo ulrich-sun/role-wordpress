@@ -1,0 +1,24 @@
+---
+- name: Backup specific theme on s3
+  tags:
+    - s3_specific_themes_backup
+  block:
+    # - name: Synchroniser le répertoire local avec S3
+    #   vars:
+    #     ansible_python_interpreter: /usr/local/bin/python3.8
+    #   s3_sync:
+    #     bucket: "{{ s3_bucket_name }}"
+    #     file_root: "{{ specific_backup_themes }}"
+    #     delete: false
+    #     secret_key: "{{ aws_secret_key }}"
+    #     access_key: "{{ aws_access_key }}"
+    #     key_prefix: "{{ s3_remote_directory_specific_themes }}"
+        
+    - name: Synchroniser le répertoire local theme avec S3
+      vars:
+        ansible_python_interpreter: /usr/local/bin/python3.8
+      ansible.builtin.command: "/usr/local/bin/python3.8 -m awscli s3 sync {{ specific_backup_themes }} s3://{{ s3_bucket_name }}/{{ s3_remote_directory_specific_themes }}"
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+      changed_when: false

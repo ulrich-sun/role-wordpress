@@ -1,0 +1,69 @@
+---
+# Inclusion du contenu du fichier backup_plugin_handler.yml
+- name: Backup_plugin_handler
+  ansible.builtin.include_tasks: tasks/specific_plugin_backup.yml
+
+# Inclusion du contenu du fichier backup_theme_handler.yml
+- name: Backup_theme_handler
+  ansible.builtin.include_tasks: tasks/specific_theme_backup.yml
+
+# Change permissions for plugins directory to R+W+X for owner and group, R+X for others
+- name: Activate_plugin_update
+  ansible.builtin.file:
+    path: "{{ wordpress_site }}/wp-content/plugins/"
+    mode: "0775"
+    recurse: yes
+
+# Change permissions for plugins directory to R+W+X for owner, R+X for group and others
+- name: Deactivate_plugin_update
+  ansible.builtin.file:
+    path: "{{ wordpress_site }}/wp-content/plugins/"
+    mode: "0555"
+    recurse: yes
+
+#Change permissions for plugins/malcare-security directory for R+W+X for owner and group, R+X for others
+- name: Activate_plugin_malcare-security_update
+  ansible.builtin.file:
+    path: "{{ wordpress_site }}/wp-content/plugins/malcare-security"
+    mode: "0777"
+    recurse: yes
+
+# Inclusion du contenu du fichier s3_global_db_backup.yml
+- name: S3_global_db_backup_handler
+  ansible.builtin.include_tasks: tasks/s3_global_db_backup.yml
+
+# Inclusion du contenu du fichier s3_global_plugins_backup.yml
+- name: S3_global_plugins_backup_handler
+  ansible.builtin.include_tasks: tasks/s3_global_plugins_backup.yml
+
+
+# Inclusion du contenu du fichier s3_global_themes_backup.yml
+- name: S3_global_themes_backup_handler
+  ansible.builtin.include_tasks: tasks/s3_global_themes_backup.yml
+
+# Inclusion du contenu du fichier s3_specific_plugins_backup.yml
+- name: S3_specific_plugins_backup_handler
+  ansible.builtin.include_tasks: tasks/s3_specific_plugins_backup.yml
+
+# Inclusion du contenu du fichier s3_specific_themes_backup.yml
+- name: S3_specific_themes_backup_handler
+  ansible.builtin.include_tasks: tasks/s3_specific_themes_backup.yml
+
+# Inclusion du contenu du fichier s3_backup_site.yml
+- name: S3_backup_site_handler
+  ansible.builtin.include_tasks: tasks/s3_backup_site.yml
+
+- name: Global_backup_db
+  ansible.builtin.include_tasks: tasks/global_backup_db.yml
+
+- name: Global_restore_db
+  ansible.builtin.include_tasks: tasks/global_restore_db.yml
+
+- name: Restore_db_s3
+  ansible.builtin.include_tasks: tasks/s3_global_db_restore.yml
+
+- name: Global_backup
+  ansible.builtin.include_tasks: tasks/global_backup.yml
+
+- name: Drive_backup_handler
+  ansible.builtin.include_tasks: tasks/drive_backup.yml

@@ -1,0 +1,224 @@
+---
+- name: Deploy wordpress
+  ansible.builtin.include_tasks: deploy_wordpress.yml
+  tags:
+    - deploy
+
+- name: Update Wordpress
+  ansible.builtin.include_tasks: install_plugins.yml
+  tags:
+    - update_wordpress
+
+- name: Install plugins
+  ansible.builtin.include_tasks: install_plugins.yml
+  tags:
+    - install_plugins
+
+- name: Activate plugins
+  ansible.builtin.include_tasks: install_plugins.yml
+  tags:
+    - activate_plugins
+
+- name: Uninstall plugins
+  ansible.builtin.include_tasks: uninstall_plugins.yml
+  tags:
+    - uninstall_plugins
+
+- name: Deactivate plugins
+  ansible.builtin.include_tasks: uninstall_plugins.yml
+  tags:
+    - deactivate_plugins
+
+- name: Lists installed plugins
+  ansible.builtin.include_tasks: list_plugins.yml
+  tags:
+    - plugins_list
+
+- name: Update plugins installed
+  ansible.builtin.include_tasks: update_plugins.yml
+  tags:
+    - update_plugin
+
+- name: Install themes
+  ansible.builtin.include_tasks: install_themes.yml
+  tags:
+    - install_themes
+
+- name: Activate themes
+  ansible.builtin.include_tasks: install_themes.yml
+  tags:
+    - activate_themes
+
+- name: Uninstall themes
+  ansible.builtin.include_tasks: uninstall_themes.yml
+  tags:
+    - uninstall_themes
+
+- name: Deactivate themes
+  ansible.builtin.include_tasks: uninstall_themes.yml
+  tags:
+    - deactivate_themes
+
+- name: Update theme installed
+  ansible.builtin.include_tasks: update_themes.yml
+  tags:
+    - update_theme
+
+- name: Global backup
+  ansible.builtin.include_tasks: global_backup.yml
+  tags:
+    - global_backup
+
+- name: Global restore
+  ansible.builtin.include_tasks: global_restore.yml
+  tags:
+    - global_restore
+
+- name: Global backup data base
+  ansible.builtin.include_tasks: global_backup_db.yml
+  tags:
+    - global_backup_db
+
+- name: Global restore data base
+  ansible.builtin.include_tasks: global_restore_db.yml
+  tags:
+    - global_restore_db
+
+- name: Plugins backup
+  ansible.builtin.include_tasks: plugin_backup.yml
+  tags:
+    - plugins_backup
+
+- name: Plugins restore
+  ansible.builtin.include_tasks: plugin_restore.yml
+  tags:
+    - plugins_restore
+
+- name: Themes backup
+  ansible.builtin.include_tasks: themes_backup.yml
+  tags:
+    - themes_backup
+
+- name: Themes restore
+  ansible.builtin.include_tasks: themes_restore.yml
+  tags:
+    - themes_restore
+
+- name: Specific plugin backup
+  ansible.builtin.include_tasks: specific_plugin_backup.yml
+  tags:
+    - plugin_specific_backup
+
+- name: Specific plugin restore
+  ansible.builtin.include_tasks: specific_plugin_restore.yml
+  tags:
+    - plugin_specific_restore
+
+- name: Specific theme backup
+  ansible.builtin.include_tasks: specific_theme_backup.yml
+  tags:
+    - theme_specific_backup
+
+- name: Specific theme restore
+  ansible.builtin.include_tasks: specific_theme_restore.yml
+  tags:
+    - theme_specific_restore
+
+- name: Backup global site to AWS S3
+  ansible.builtin.include_tasks: s3_backup_site.yml
+  when: s3
+  tags:
+    - backup_site_s3
+
+- name: Backup plugins to AWS S3
+  ansible.builtin.include_tasks: s3_global_plugins_backup.yml
+  tags:
+    - s3_global_plugins_backup
+
+- name: Backup themes to AWS S3
+  ansible.builtin.include_tasks: s3_global_themes_backup.yml
+  tags:
+    - s3_global_themes_backup
+
+- name: Backup specific plugin to AWS S3
+  ansible.builtin.include_tasks: s3_specific_plugins_backup.yml
+  tags:
+    - s3_specific_plugins_backup
+
+- name: Backup specific theme to AWS S3
+  ansible.builtin.include_tasks: s3_specific_themes_backup.yml
+  tags:
+    - s3_specific_themes_backup
+
+- name: Restore db from AWS S3
+  ansible.builtin.include_tasks: s3_global_db_restore.yml
+  tags:
+    - restore_db_s3
+
+- name: Backup global site to AWS S3
+  ansible.builtin.include_tasks: s3_backup_site.yml
+  when: "{{ backup }} == 's3'"
+  tags:
+    - backup_site_s3
+
+- name: Restore global site from AWS S3
+  ansible.builtin.include_tasks: s3_restore_site.yml
+  tags:
+    - restore_site_s3
+
+- name: Restore global plugins from AWS S3
+  ansible.builtin.include_tasks: s3_global_plugins_restore.yml
+  tags:
+    - restore_plugins_s3
+
+- name: Restore global themes from AWS S3
+  ansible.builtin.include_tasks: s3_global_themes_restore.yml
+  tags:
+    - restore_themes_s3
+
+- name: Restore specific plugins from AWS S3
+  ansible.builtin.include_tasks: s3_specific_plugins_restore.yml
+  tags:
+    - restore_specific_plugins_s3
+
+- name: Restore specific themes from AWS S3
+  ansible.builtin.include_tasks: s3_specific_themes_restore.yml
+  tags:
+    - restore_specific_themes_s3
+
+- name: Open_folder_plugins
+  ansible.builtin.include_tasks: close_open_folder_plugins.yml
+  tags:
+    - open_folders
+
+- name: Close_folder_plugins
+  ansible.builtin.include_tasks: close_open_folder_plugins.yml
+  tags:
+    - close_folders
+
+- name: Cleanup_backup local
+  ansible.builtin.include_tasks: cleanup_backup.yml
+  tags:
+    - cleanup_backup
+    
+- name: Cleanup_backup semaphore
+  ansible.builtin.include_tasks: cleanup_backup_semaphore.yml
+  tags:
+    - cleanup_backup_semaphore
+    
+- name: Download
+  ansible.builtin.include_tasks: download.yml
+  tags:
+    - download
+
+- name: Include Google Drive Backup Tasks
+  ansible.builtin.include_tasks: drive_backup.yml
+  when: drive
+  tags:
+    - google_drive_backup
+
+- name: Include Combined S3 and Google Drive Backup Tasks
+  ansible.builtin.include_tasks: s3_drive_backup.yml
+  when: s3 and drive
+  tags:
+    - s3_drive_backup

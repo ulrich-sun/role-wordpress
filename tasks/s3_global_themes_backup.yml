@@ -1,0 +1,36 @@
+---
+- name: Backup themes on s3
+  tags:
+    - s3_global_themes_backup
+  block:
+      
+    # - name: Synchroniser le répertoire local avec S3
+    #   vars:
+    #     ansible_python_interpreter: /usr/local/bin/python3.8
+    #   s3_sync:
+    #     bucket: "{{ s3_bucket_name }}"
+    #     file_root: "{{ global_backup_themes }}"
+    #     delete: false
+    #     secret_key: "{{ aws_secret_key }}"
+    #     access_key: "{{ aws_access_key }}"
+    #     key_prefix: "{{ s3_remote_directory_themes }}"
+
+    - name: install aws cli for python3.8
+      vars:
+        ansible_python_interpreter: /usr/local/bin/python3.8
+      ansible.builtin.command: "/usr/local/bin/python3.8 -m pip install awscli"
+
+    - name: Install botocore and boto3 using pip3.8
+      ansible.builtin.command: /usr/local/bin/pip3.8 install botocore boto3
+      vars:
+        ansible_python_interpreter: /usr/local/bin/python3.8
+      changed_when: false
+
+    - name: Synchroniser le répertoire local db avec S3
+      vars:
+        ansible_python_interpreter: /usr/local/bin/python3.8
+      ansible.builtin.command: "/usr/local/bin/python3.8 -m awscli s3 sync {{ global_backup_themes }} s3://{{ s3_bucket_name }}/{{ s3_remote_directory_themes }}"
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+      changed_when: false

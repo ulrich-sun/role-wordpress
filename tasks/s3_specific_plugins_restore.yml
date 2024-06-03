@@ -1,0 +1,48 @@
+---
+- name: Restore specific plugin from s3
+  tags:
+    - restore_specific_plugins_s3
+  block:
+    # - name: Synchroniser le répertoire local avec S3
+    #   vars:
+    #     ansible_python_interpreter: /usr/local/bin/python3.8
+    #   aws_s3:
+    #     bucket: "{{ s3_bucket_name }}"
+    #     object: "{{ s3_remote_directory_specific_plugins }}/{{ s3_filename_specific_plugins }}"
+    #     dest: "{{ compose_project_dir }}/s3_specific_plugin_restore/{{ s3_filename_specific_plugins }}"
+    #     mode: get
+    #     secret_key: "{{ aws_secret_key }}"
+    #     access_key: "{{ aws_access_key }}"
+    #     region: "{{ region }}"
+        
+    - name: Télécharger du plugin specifique depuis S3
+      vars:
+        ansible_python_interpreter: /usr/local/bin/python3.8
+      ansible.builtin.command: "/usr/local/bin/aws s3 cp s3://{{ s3_bucket_name }}/{{ s3_remote_directory_specific_plugins }}/{{ s3_filename_specific_plugins }} {{ compose_project_dir }}/{{ s3_specific_plugin_restore }}/{{ s3_filename_specific_plugins }}"
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_DEFAULT_REGION: "{{ region }}"
+      changed_when: false
+      
+    - name: Extraire le fichier ZIP du plugin
+      ansible.builtin.command: sh -c " unzip -o {{ s3_specific_plugin_name_restore.restore_files_path }}/{{ s3_specific_plugin_name_restore.restore_pattern }} -d unzip_folder/"
+      changed_when: false  # Indicate that the task should not be considered as having changed anything
+
+    - name: Copier les fichiers extraits depuis unzip_folder au reperoire eazytraining
+      ansible.builtin.command: sh -c " rsync -a unzip_folder/ {{ wordpress_site }}/wp-content/plugins/"
+      changed_when: false  # Indicate that the task should not be considered as having changed anything
+
+    - name: Remove backup file from the WordPress
+      ansible.builtin.command: sh -c "sudo rm -rf unzip_folder/*"
+      changed_when: false  # Indicate that the task should not be considered as having changed anything
+
+    #- name: Get specific plugin version using wp-cli
+     # ansible.builtin.command:
+      #  cmd: "/usr/local/bin/wp --path=/var/www/html/ plugin get {{ plugin_to_update.plugin_name }} --field=version --format=json --allow-root --ssh=docker:{{ wordpress_container_name }}"
+      #register: plugin_version_result
+      #changed_when: false
+
+    #- name: Print the plugin version
+     # ansible.builtin.debug:
+      #  msg: "The version of {{ plugin_to_update.plugin_name }} is {{ plugin_version_result.stdout }}"

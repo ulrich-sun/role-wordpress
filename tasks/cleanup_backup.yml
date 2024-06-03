@@ -1,0 +1,121 @@
+---
+- name: Cleanup
+  tags:
+    - cleanup_backup
+  block:
+    - name: Get a list of backup files
+      ansible.builtin.find:
+        paths: "{{ global_backup_db }}"
+        patterns: "backup_*_EAZYTraining_*_global_db.sql"
+      register: backup_files
+
+    - name: Get a list of backup files wordpress
+      ansible.builtin.find:
+        paths: "{{ global_backup_site }}"
+        patterns: "backup_*_EAZYTraining_*_global.zip"
+      register: backup_files_wordpress
+
+    - name: Get today's date
+      ansible.builtin.set_fact:
+        current_date: "{{ ansible_date_time.date }}"
+
+    - name: to day days 
+      ansible.builtin.command: date -d "{{ current_date }}" +"%Y-%m-%d"
+      register: to_day
+      changed_when: false
+
+    - name: Subtract 2 days from today's date
+      ansible.builtin.command: date -d "{{ current_date }} - 2 days" +"%Y-%m-%d"
+      register: two_days_ago
+      changed_when: false
+
+    - name: Subtract 1 days from today's date
+      ansible.builtin.command: date -d "{{ current_date }} - 1 days" +"%Y-%m-%d"
+      register: one_days_ago
+      changed_when: false
+
+    #- name: Show today's date subtracted by 2 days
+     # debug:
+      #  var: two_days_ago.stdout
+
+    - name: Compare with regular expression output for database
+      ansible.builtin.debug:
+        msg: "oui"
+      when: item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
+      loop: "{{ backup_files.files }}"
+      loop_control:
+        label: "{{ item.path }}"
+
+    - name: Compare with regular expression output for wordpress file
+      ansible.builtin.debug:
+        msg: "oui"
+      when: item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
+      loop: "{{ backup_files_wordpress.files }}"
+      loop_control:
+        label: "{{ item.path }}"
+
+    - name: Delete old files for database
+      ansible.builtin.command: "rm {{ item.path }}"
+      loop: "{{ backup_files.files }}"
+      loop_control:
+        label: "{{ item.path }}"
+      changed_when: false
+      when: item.path | regex_replace('^.{78}(.{2}).*', '\\1') != '23' and item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
+
+    - name: Delete old files for wordpress file
+      ansible.builtin.command: "rm {{ item.path }}"
+      loop: "{{ backup_files_wordpress.files }}"
+      loop_control:
+        label: "{{ item.path }}"
+      changed_when: false
+      when: item.path | regex_replace('^.{67}(.{10}).*', '\\1') == to_day.stdout and item.path | regex_replace('^.{67}(.{10}).*', '\\1') == one_days_ago.stdout
+
+    - name: Renommer les fichiers conformes for database
+      ansible.builtin.command: "mv {{ item.path }} {{ global_backup_db }}/{{ 'daily_' + item.path.split('/')[-1] }}"
+      loop: "{{ backup_files.files }}"
+      loop_control:
+        label: "{{ item.path }}"
+      when: item.path | regex_replace('^.{78}(.{2}).*', '\\1') == '23' and item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
+      changed_when: false
+
+    #- name: Renommer les fichiers conformes for wordpress file
+    #  ansible.builtin.command: "mv {{ item.path }} {{ global_backup_site }}/{{ 'daily_' + item.path.split('/')[-1] }}"
+    #  loop: "{{ backup_files_wordpress.files }}"
+    #  loop_control:
+    #    label: "{{ item.path }}"
+    #  when: item.path | regex_replace('^.{78}(.{2}).*', '\\1') == '02' and item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
+    #  changed_when: false
+
+    # - name: Synchroniser le répertoire local avec S3
+    #   vars:
+    #     ansible_python_interpreter: /usr/local/bin/python3.8
+    #   s3_sync:
+    #     bucket: "{{ s3_bucket_name }}"
+    #     file_root: "{{ global_backup_db }}"
+    #     delete: yes
+    #     secret_key: "{{ aws_secret_key }}"
+    #     access_key: "{{ aws_access_key }}"
+    #     key_prefix: "{{ s3_remote_directory_db }}"
+
+    - name: install aws cli for python3.8
+      vars:
+        ansible_python_interpreter: /usr/local/bin/python3.8
+      ansible.builtin.command: "/usr/local/bin/python3.8 -m pip install awscli"
+
+    - name: Synchroniser le répertoire local db avec S3
+      vars:
+        ansible_python_interpreter: /usr/local/bin/python3.8
+      ansible.builtin.command: "/usr/local/bin/python3.8 -m awscli s3 sync {{ global_backup_db }} s3://{{ s3_bucket_name }}/{{ s3_remote_directory_db }} --delete"
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+      changed_when: false
+
+    - name: Synchroniser le répertoire local site avec S3
+      vars:
+        ansible_python_interpreter: /usr/local/bin/python3.8
+      ansible.builtin.command: "/usr/local/bin/python3.8 -m awscli s3 sync {{ global_backup_site }} s3://{{ s3_bucket_name }}/{{ s3_remote_directory_site }} --delete"
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+      changed_when: false

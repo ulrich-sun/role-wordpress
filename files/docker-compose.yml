@@ -1,0 +1,42 @@
+---
+version: '3.3'
+services:
+  db:
+    container_name: db
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: somewordpress
+      MYSQL_DATABASE: eazy_training
+      MYSQL_USER: tafen_dirane
+      MYSQL_PASSWORD: djombaousoumission
+  wordpress:
+    container_name: wordpress
+    depends_on:
+      - db
+    image: wordpress:5.3.2
+    ports:
+      - "80:80"
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: tafen_dirane
+      WORDPRESS_DB_PASSWORD: djombaousoumission
+      WORDPRESS_DB_NAME: eazy_training
+    volumes:
+      - ./eazytraining:/var/www/html
+      - ~/.ssh/id_rsa.pub:/root/.ssh/id_rsa.pub
+      - ./init.sh:/usr/local/bin/init.sh
+    command: ["bash", "/usr/local/bin/init.sh", "apache2-foreground"]
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    volumes:
+      - /sessions
+volumes:
+  db_data:

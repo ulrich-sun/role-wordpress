@@ -1,0 +1,44 @@
+---
+- name: Backup theme in local
+  tags:
+    - themes_backup
+  block:
+    - name: Set variables
+      ansible.builtin.set_fact:
+        container_name: "{{ wordpress_container_name }}"
+        wp_dir: "{{ wordpress_site }}/wp-content/themes"  # Change the directory path for themes
+        site_name: "EAZYTraining"
+        timestamp: "{{ ansible_date_time.iso8601 | regex_replace('[-T:.]', '') | regex_replace('([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{6})', '\\1-\\2-\\3-\\4') }}"
+        unique_id: "{{ lookup('password', '/dev/null length=10 chars=ascii_letters,digits') }}"
+
+    - name: List WordPress themes
+      ansible.builtin.command: sh -c "cd {{ wp_dir }} && find . -maxdepth 1 -mindepth 1 -type d -exec basename {} \;"
+      register: themes_list_result
+      changed_when: false
+
+    - name: Create backup directory if it doesn't exist
+      ansible.builtin.file:
+        path: "{{ global_backup_themes }}/backup_{{ timestamp }}_{{ site_name }}_{{ unique_id }}_themes"  # Change the backup directory path for themes
+        state: directory
+        owner: "{{ system_user }}"  # Specify appropriate owner
+        group: tape    # Specify appropriate group
+        mode: '0755'   # Specify appropriate permissions
+
+    - name: Get theme version using wp-cli
+      ansible.builtin.command: "/usr/local/bin/wp theme get {{ item }} --field=version --allow-root --ssh=docker:wordpress"  # Change the wp-cli command for themes
+      register: theme_version_result
+      changed_when: False
+      with_items: "{{ themes_list_result.stdout_lines }}"
+      loop_control:
+        loop_var: item
+
+    - name: Backup WordPress themes
+      ansible.builtin.command: "sh -c 'cd {{ wp_dir }} && sudo zip -r {{ global_backup_themes }}/backup_{{ timestamp }}_{{ site_name }}_{{ unique_id }}_themes/backup_{{ timestamp }}_{{ site_name }}_{{ unique_id }}_{{ theme.0.item}}_{{ theme.0.stdout }}.zip {{ theme.1 }}'"
+      with_together:
+        - "{{ theme_version_result.results }}"
+        - "{{ themes_list_result.stdout_lines }}"
+      loop_control:
+        loop_var: theme
+      notify:
+        - S3_global_themes_backup_handler
+      failed_when: false  # Indicate that the task should not be considered as having changed anything

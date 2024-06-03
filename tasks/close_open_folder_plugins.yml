@@ -1,0 +1,23 @@
+- name: Ouvrir les dossiers plugins et malcare-security
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: "{{ item.mode }}"
+    recurse: yes
+  loop:
+    - {path: "{{ wordpress_site }}/wp-content/plugins", mode: "775"}
+    - {path: "{{ wordpress_site }}/wp-content/plugins/malcare-security", mode: "777"}
+  tags:
+    - open_folders
+
+- name: Fermer les dossiers plugins et malcare-security
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: "{{ item.mode }}"
+    recurse: yes
+  loop:
+    - {path: "{{ wordpress_site }}/wp-content/plugins", mode: "555"}
+    - {path: "{{ wordpress_site }}/wp-content/plugins/malcare-security", mode: "777"}
+  tags:
+    - close_folders

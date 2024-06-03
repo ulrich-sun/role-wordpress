@@ -1,0 +1,22 @@
+---
+- name: Restore specific theme
+  tags:
+    - theme_specific_restore
+  block:
+    - name: Trouver le fichier de sauvegarde du plugin sur l'hôte
+      ansible.builtin.find:
+        paths: "{{ specific_theme_name_restore.restore_files_path }}"
+        patterns: "{{ specific_theme_name_restore.restore_pattern }}"  # Utiliser le motif de sauvegarde spécifique du plugin
+      register: restore_theme_files
+
+    - name: Extraire le fichier ZIP du plugin
+      ansible.builtin.command: sh -c "sudo unzip -o {{ specific_theme_name_restore.restore_files_path }}/{{ specific_theme_name_restore.restore_pattern }} -d unzip_folder"
+      changed_when: false  # Indicate that the task should not be considered as having changed anything
+
+    - name: Copier les fichiers extraits depuis unzip_folder au reperoire eazytraining
+      ansible.builtin.command: sh -c "sudo rsync -a unzip_folder/ {{ wordpress_site }}/wp-content/themes/"
+      changed_when: false  # Indicate that the task should not be considered as having changed anything
+
+    - name: Remove backup file from the WordPress
+      ansible.builtin.command: sh -c "sudo rm -rf unzip_folder/*"
+      changed_when: false  # Indicate that the task should not be considered as having changed anything

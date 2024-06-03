@@ -1,0 +1,35 @@
+---
+- name: Backup specific plugin in local
+  tags:
+    - plugin_specific_backup
+  block:
+    - name: Set variables
+      ansible.builtin.set_fact:
+        container_name: "{{ wordpress_container_name }}"
+        wp_dir: "{{ wordpress_site }}/wp-content/plugins"
+        site_name: "EAZYTraining"
+        timestamp: "{{ ansible_date_time.iso8601 | regex_replace('[-T:.]', '') | regex_replace('([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{6})', '\\1-\\2-\\3-\\4') }}"
+        unique_id: "{{ lookup('password', '/dev/null length=10 chars=ascii_letters,digits') }}"
+
+    - name: Get plugin version from the plugin file
+      ansible.builtin.command: "/usr/local/bin/wp plugin get {{ plugin_to_update.plugin_name }} --field=version --allow-root --ssh=docker:{{ wordpress_container_name }}"
+      register: plugin_version_result
+      changed_when: False
+
+    - name: Set file name
+      ansible.builtin.set_fact:
+        backup_file_name: "backup_{{ timestamp }}_{{ site_name }}_{{ unique_id }}_{{ plugin_to_update.plugin_name }}_{{ plugin_version_result.stdout }}.zip"
+
+    - name: Backup the specific plugin
+      ansible.builtin.command: sh -c "cd {{ wp_dir }} && sudo zip -r {{ plugin_to_update.plugin_name }}/{{ backup_file_name }} {{ plugin_to_update.plugin_name }}"
+      changed_when: false  # Indicate that the task should not be considered as having changed anything
+
+    - name: Copy backup file
+      ansible.builtin.command: sudo cp {{ wp_dir }}/{{ plugin_to_update.plugin_name }}/{{ backup_file_name }} {{ specific_backup_plugins }}
+      notify:
+        - S3_specific_plugins_backup_handler
+      failed_when: false  # Indicate that the task should not be considered as having changed anything
+
+    - name: Remove backup file from the WordPress folder
+      ansible.builtin.command: sudo rm -f {{ wp_dir }}/{{ plugin_to_update.plugin_name }}/{{ backup_file_name }}
+      changed_when: false  # Indicate that the task should not be considered as having changed anything

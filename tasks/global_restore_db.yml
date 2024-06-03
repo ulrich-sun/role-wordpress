@@ -1,0 +1,27 @@
+---
+- name: Restore db
+  tags:
+    - global_backup_db
+  block:
+    - name: Supprimer le conteneur Docker site-vitrine-db s'il existe
+      ansible.builtin.shell:: docker rm -f {{ db_container_name }}
+      failed_when: false
+
+    - name: Supprimer le volume Docker site-vitrine-db-data s'il existe
+      ansible.builtin.shell:: docker volume rm -f {{ db_volume_name }}
+      failed_when: false
+
+    - name: Démarrer le conteneur Docker site-vitrine-db
+      ansible.builtin.shell:: cd {{ site_vitrine_directory }} && docker compose up -d {{ db_container_name }}
+
+    - name: Copier le fichier de sauvegarde vers le conteneur
+      ansible.builtin.command:: docker cp {{ restore_db_name.restore_files_path }}/{{ restore_db_name.restore_pattern }} {{ db_container_name }}:{{ restore_db_name.restore_pattern }}
+
+    - name: patienter avant de continuer
+      ansible.builtin.command:: sleep 1
+
+    - name: Restaurer le fichier SQL dans la base de données MySQL
+      ansible.builtin.command:: docker exec -i {{ db_container_name }} sh -c "exec mysql  -u{{ wp_db_user }} -p{{ wp_db_psw }} {{ wp_db_name }} < {{ restore_db_name.restore_pattern }}"
+
+    - name: Remove file from wordpress container
+      ansible.builtin.command:: docker exec {{ db_container_name }} sh -c 'rm ./*.sql'
