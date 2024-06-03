@@ -8,18 +8,21 @@
         paths: "{{ global_backup_db }}"
         patterns: "backup_*_EAZYTraining_*_global_db.sql"
       register: backup_files
+      changed_when: false
 
     - name: Get a list of backup files wordpress
       ansible.builtin.find:
         paths: "{{ global_backup_site }}"
         patterns: "backup_*_EAZYTraining_*_global.zip"
       register: backup_files_wordpress
+      changed_when: false
 
     - name: Get today's date
       ansible.builtin.set_fact:
         current_date: "{{ ansible_date_time.date }}"
+      changed_when: false
 
-    - name: to day days 
+    - name: To day days 
       ansible.builtin.command: date -d "{{ current_date }}" +"%Y-%m-%d"
       register: to_day
       changed_when: false
@@ -45,6 +48,7 @@
       loop: "{{ backup_files.files }}"
       loop_control:
         label: "{{ item.path }}"
+      changed_when: false
 
     - name: Compare with regular expression output for wordpress file
       ansible.builtin.debug:
@@ -53,6 +57,7 @@
       loop: "{{ backup_files_wordpress.files }}"
       loop_control:
         label: "{{ item.path }}"
+      changed_when: false
 
     - name: Delete old files for database
       ansible.builtin.command: "rm {{ item.path }}"
@@ -61,7 +66,7 @@
         label: "{{ item.path }}"
       changed_when: false
       when: item.path | regex_replace('^.{78}(.{2}).*', '\\1') != '23' and item.path | regex_replace('^.{67}(.{10}).*', '\\1') == two_days_ago.stdout
-
+      
     - name: Delete old files for wordpress file
       ansible.builtin.command: "rm {{ item.path }}"
       loop: "{{ backup_files_wordpress.files }}"
@@ -97,11 +102,12 @@
     #     access_key: "{{ aws_access_key }}"
     #     key_prefix: "{{ s3_remote_directory_db }}"
 
-    - name: install aws cli for python3.8
+    - name: Install aws cli for python3.8
       vars:
         ansible_python_interpreter: /usr/local/bin/python3.8
       ansible.builtin.command: "/usr/local/bin/python3.8 -m pip install awscli"
-
+      changed_when: false
+      
     - name: Synchroniser le répertoire local db avec S3
       vars:
         ansible_python_interpreter: /usr/local/bin/python3.8
