@@ -21,7 +21,7 @@
         path: "{{ global_backup_themes }}/backup_{{ timestamp }}_{{ site_name }}_{{ unique_id }}_themes"  # Change the backup directory path for themes
         state: directory
         owner: "{{ system_user }}"  # Specify appropriate owner
-        group: tape    # Specify appropriate group
+        group: "{{ group_gid }}"    # Specify appropriate group
         mode: '0755'   # Specify appropriate permissions
 
     - name: Get theme version using wp-cli
