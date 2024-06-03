@@ -1,6 +1,0 @@
----
-- name: Test
-  hosts: paris
-  remote_user: centos
-  roles:
-    - role-wordpress
