@@ -2,13 +2,14 @@
 - name: Backup site on s3
   tags:
     - backup_site_s3
-    
+
   block:
 
-    - name: install aws cli for python3.8
+    - name: Install aws cli for python3.8
       vars:
         ansible_python_interpreter: /usr/local/bin/python3.8
       ansible.builtin.command: "/usr/local/bin/python3.8 -m pip install awscli"
+      changed_when: false
 
     - name: Install botocore and boto3 using pip3.8
       ansible.builtin.command: /usr/local/bin/pip3.8 install botocore boto3

@@ -13,7 +13,7 @@
     #     secret_key: "{{ aws_secret_key }}"
     #     access_key: "{{ aws_access_key }}"
     #     key_prefix: "{{ s3_remote_directory_specific_plugins }}"
-      
+
     - name: Synchroniser le répertoire local plugin avec S3
       vars:
         ansible_python_interpreter: /usr/local/bin/python3.8

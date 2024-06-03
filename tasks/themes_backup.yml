@@ -39,6 +39,7 @@
         - "{{ themes_list_result.stdout_lines }}"
       loop_control:
         loop_var: theme
+      changed_when: true  # Indique que la tâche a changé quelque chose pour déclencher le handler
       notify:
         - S3_global_themes_backup_handler
       failed_when: false  # Indicate that the task should not be considered as having changed anything

@@ -24,7 +24,7 @@
         group: "{{ group_gid }}"    # Specify appropriate group
         mode: '0755'   # Specify appropriate permissions
       changed_when: false
-      
+
     - name: Get plugin version using wp-cli
       ansible.builtin.command: "/usr/local/bin/wp plugin get {{ item }} --field=version --allow-root --ssh=docker:{{ wordpress_container_name }}"
       register: plugin_version_result
@@ -40,6 +40,6 @@
         - "{{ plugins_list_result.stdout_lines }}"
       loop_control:
         loop_var: plugin
+      changed_when: true  # Indique que la tâche a changé quelque chose pour déclencher le handler
       notify:
         - S3_global_plugins_backup_handler
-      failed_when: false  

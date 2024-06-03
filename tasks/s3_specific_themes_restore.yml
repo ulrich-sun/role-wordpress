@@ -9,7 +9,7 @@
       vars:
         ansible_python_interpreter: /usr/local/bin/python3.8
       changed_when: false
-      
+
     # - name: Synchroniser le répertoire local avec S3
     #   vars:
     #     ansible_python_interpreter: /usr/local/bin/python3.8

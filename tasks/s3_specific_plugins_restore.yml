@@ -14,7 +14,7 @@
     #     secret_key: "{{ aws_secret_key }}"
     #     access_key: "{{ aws_access_key }}"
     #     region: "{{ region }}"
-        
+
     - name: Télécharger du plugin specifique depuis S3
       vars:
         ansible_python_interpreter: /usr/local/bin/python3.8
@@ -24,7 +24,7 @@
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
         AWS_DEFAULT_REGION: "{{ region }}"
       changed_when: false
-      
+
     - name: Extraire le fichier ZIP du plugin
       ansible.builtin.command: sh -c " unzip -o {{ s3_specific_plugin_name_restore.restore_files_path }}/{{ s3_specific_plugin_name_restore.restore_pattern }} -d unzip_folder/"
       changed_when: false  # Indicate that the task should not be considered as having changed anything

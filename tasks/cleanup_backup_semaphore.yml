@@ -6,12 +6,12 @@
       ansible.builtin.command: date -u +"%Y-%m-%d"
       register: current_date
       changed_when: false
-      
+
     - name: Get the current month in UTC
       ansible.builtin.command: date -u +"%B"
       register: current_month
       changed_when: false
-      
+
     - name: List files in S3 bucket
       ansible.builtin.command: >
         /usr/local/bin/python3.8 -m awscli s3 ls s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/ --recursive
@@ -20,36 +20,36 @@
         AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
       changed_when: false
-      
+
     - name: Extract and sort backup files with dates
       ansible.builtin.set_fact:
         sorted_backup_files: >-
-          {{ s3_files.stdout_lines 
-             | select('search', 'backup_') 
-             | map('regex_search', 'backup_(.{10})') 
-             | map('regex_replace', 'backup_', '') 
-             | map('regex_replace', '.sql', '') 
-             | zip(s3_files.stdout_lines | select('search', 'backup_')) 
-             | sort(attribute=0, reverse=True) 
-             | map('last') 
+          {{ s3_files.stdout_lines
+             | select('search', 'backup_')
+             | map('regex_search', 'backup_(.{10})')
+             | map('regex_replace', 'backup_', '')
+             | map('regex_replace', '.sql', '')
+             | zip(s3_files.stdout_lines | select('search', 'backup_'))
+             | sort(attribute=0, reverse=True)
+             | map('last')
              | list }}
       changed_when: false
-      
+
     - name: Debug sorted backup files
       ansible.builtin.debug:
         var: sorted_backup_files
       changed_when: false
-      
+
     - name: Set most recent backup file
       ansible.builtin.set_fact:
         most_recent_backup: "{{ sorted_backup_files[0] }}"
       changed_when: false
-      
+
     - name: Debug most recent backup file
       ansible.builtin.debug:
         var: most_recent_backup
       changed_when: false
-      
+
     - name: Delete old backup files
       ansible.builtin.shell: |
         for file in {{ sorted_backup_files[1:] | join(' ') }}; do
@@ -60,7 +60,7 @@
         AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
       changed_when: false
-      
+
     - name: Rename the most recent backup file
       ansible.builtin.command: >
         /usr/local/bin/python3.8 -m awscli s3 mv s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ most_recent_backup.split('/')[-1] }} s3://{{ s3_bucket_name }}/{{ bd_semaphore }}/{{ current_month.stdout }}_{{ most_recent_backup.split('/')[-1] }}

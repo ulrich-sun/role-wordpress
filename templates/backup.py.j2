@@ -23,12 +23,12 @@ upload_file_list = [
     {
         'filename': 'wordpress.sql',
         'path': '{{ global_backup_db }}/wordpress.sql',  # Full local path
-        'id': '1Sg1-lDb2mFwGpq6-xfi_T38NK3gtONn5'
+        'id': '{{ wordpress_sql_id }}'  # Placeholder for the file ID
     },
     {
         'filename': 'wp-frontend.zip',
         'path': '{{ global_backup_site }}/wp-frontend.zip',  # Full local path
-        'id': '1J_6oxi9W1gMwhAj3SIS6Alpj-aP-ueFr'
+        'id': '{{ wp_frontend_zip_id }}'  # Placeholder for the file ID
     }
 ]
 
