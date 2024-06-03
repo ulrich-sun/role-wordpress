@@ -23,6 +23,8 @@
       ansible.builtin.template:
         src: settings.yaml.j2
         dest: "{{ compose_project_dir }}/Pydrive/settings.yaml"
+        owner: "{{ system_user }}"  # Specify appropriate owner
+        group: "{{ group_gid }}"    # Specify appropriate group
         mode: '0644'
       changed_when: false 
 
@@ -30,6 +32,8 @@
       ansible.builtin.template:
         src: backup.py.j2
         dest: "{{ compose_project_dir }}/Pydrive/backup.py"
+        owner: "{{ system_user }}"  # Specify appropriate owner
+        group: "{{ group_gid }}"    # Specify appropriate group
         mode: '0755'
       changed_when: false 
 
@@ -37,12 +41,18 @@
       ansible.builtin.template:
         src: credentials.txt.j2
         dest: "{{ compose_project_dir }}/Pydrive/credentials.txt"
-
+        owner: "{{ system_user }}"  # Specify appropriate owner
+        group: "{{ group_gid }}"    # Specify appropriate group
+        mode: '0644'
+        
     - name: Generate client_secrets.json from template
       ansible.builtin.template:
         src: client_secrets.json.j2
         dest: "{{ compose_project_dir }}/Pydrive/client_secrets.json"
-
+        owner: "{{ system_user }}"  # Specify appropriate owner
+        group: "{{ group_gid }}"    # Specify appropriate group
+        mode: '0644'
+        
     - name: Upload the backup to Google Drive
       ansible.builtin.command: /usr/local/bin/python3.8 {{ compose_project_dir }}/Pydrive/backup.py
       changed_when: false      
