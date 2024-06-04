@@ -18,22 +18,22 @@
     # - name: supprimer les fichiers
     #   command: sh -c "rm -r "{{ compose_project_dir }}/{{ backup_db_dir }}/*""
 
-   # - name: Backup database with backup_file_db name
-      # command: cd  {{ compose_project_dir }}/{{ backup_db_dir }}
-    #  ansible.builtin.command: docker exec {{ db_container_name }} sh -c "MYSQL_PWD='{{ db_root_psw }}' mysqldump -u root {{ wp_db_name }} > {{ wp_dir }}/{{ backup_file_db }}"
-    #  changed_when: false
+    - name: Backup database with backup_file_db name
+      #ansible.builtin.command: cd  {{ compose_project_dir }}/{{ backup_db_dir }}
+      ansible.builtin.command: docker exec {{ db_container_name }} sh -c "MYSQL_PWD='{{ db_root_psw }}' mysqldump -u root {{ wp_db_name }} > {{ wp_dir }}/{{ backup_file_db }}"
+      changed_when: false
 
     - name: Backup database without backup_file_db name for google drive
       ansible.builtin.command: docker exec {{ db_container_name }} sh -c "MYSQL_PWD='{{ db_root_psw }}' mysqldump -u root {{ wp_db_name }} > {{ wp_dir }}/{{ wordpress }}"
       changed_when: false
 
-   # - name: Copy file db of s3 from container to host
-   #   ansible.builtin.command: docker cp "{{ db_container_name }}:{{ wp_dir }}/{{ backup_file_db }}" "{{ compose_project_dir }}/{{ backup_db_dir }}"
-   #   args:
-   #     creates: "{{ compose_project_dir }}/{{ backup_db_dir }}/{{ backup_file_db }}"
-   #   notify:
-   #     - S3_global_db_backup_handler
-   #   failed_when: false
+    - name: Copy file db of s3 from container to host
+      ansible.builtin.command: docker cp "{{ db_container_name }}:{{ wp_dir }}/{{ backup_file_db }}" "{{ compose_project_dir }}/{{ backup_db_dir }}"
+      args:
+        creates: "{{ compose_project_dir }}/{{ backup_db_dir }}/{{ backup_file_db }}"
+      notify:
+        - S3_global_db_backup_handler
+      failed_when: false
 
     - name: Copy file db of drive from container to host
       ansible.builtin.command: docker cp "{{ db_container_name }}:{{ wp_dir }}/{{ wordpress }}" "{{ compose_project_dir }}/{{ backup_db_dir }}"
@@ -41,7 +41,7 @@
         creates: "{{ compose_project_dir }}/{{ backup_db_dir }}/{{ wordpress }}"
       notify:
         - Drive_backup_handler
-      #changed_when: true
+      failed_when: false
 
     - name: Remove file from mysql container
       ansible.builtin.command: docker exec {{ db_container_name }} sh -c 'rm -rf {{ wp_dir }}/*.sql'
