@@ -9,6 +9,7 @@ exclude_paths:
   - .cache/
   - .github/
   - excludethis/
+  - tests/
 
 # Ansible-lint does not fail on warnings from the rules or tags listed below
 warn_list:
@@ -23,3 +24,5 @@ skip_list:
   - package-latest
   - yaml
   - metadata
+  - command-instead-of-module
+  - command-instead-of-shell

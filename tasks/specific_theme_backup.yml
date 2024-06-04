@@ -26,9 +26,9 @@
 
     - name: Copy backup file from container to host
       ansible.builtin.command: sh -c "sudo cp {{ wp_dir }}/{{ theme_to_update.theme_name }}/{{ backup_file_name }} {{ compose_project_dir }}/specific_backup_themes"
+      changed_when: true  # Indique que la tâche a changé quelque chose pour déclencher le handler
       notify:
         - S3_specific_themes_backup_handler
-      changed_when: false  # Indicate that the task should not be considered as having changed anything
 
     - name: Remove backup file from the WordPress container
       ansible.builtin.command: sh -c "sudo rm -f {{ wp_dir }}/{{ theme_to_update.theme_name }}/{{ backup_file_name }}"

@@ -1,0 +1,58 @@
+- name: Backup site in google drive
+  tags:
+    - google_drive_backup
+  block:
+    - name: Ensure pip is present
+      ansible.builtin.package:
+        name: python3-pip
+        state: present
+      changed_when: false
+
+    - name: Install PyDrive
+      ansible.builtin.pip:
+        name: PyDrive
+        executable: /usr/local/bin/pip3.8
+        state: present
+      changed_when: false
+
+    - name: Create Pydrive folder
+      ansible.builtin.command: mkdir -p "{{ compose_project_dir }}/Pydrive"
+      changed_when: false
+
+    - name: Create PyDrive settings file from template
+      ansible.builtin.template:
+        src: settings.yaml.j2
+        dest: "{{ compose_project_dir }}/Pydrive/settings.yaml"
+        owner: "{{ system_user }}"  # Specify appropriate owner
+        group: "{{ group_gid }}"    # Specify appropriate group
+        mode: '0644'
+      changed_when: false
+
+    - name: Create backup script from template
+      ansible.builtin.template:
+        src: backup.py.j2
+        dest: "{{ compose_project_dir }}/Pydrive/backup.py"
+        owner: "{{ system_user }}"  # Specify appropriate owner
+        group: "{{ group_gid }}"    # Specify appropriate group
+        mode: '0755'
+      changed_when: false
+
+    - name: Generate credentials.txt from template
+      ansible.builtin.template:
+        src: credentials.txt.j2
+        dest: "{{ compose_project_dir }}/Pydrive/credentials.txt"
+        owner: "{{ system_user }}"  # Specify appropriate owner
+        group: "{{ group_gid }}"    # Specify appropriate group
+        mode: '0644'
+
+    - name: Generate client_secrets.json from template
+      ansible.builtin.template:
+        src: client_secrets.json.j2
+        dest: "{{ compose_project_dir }}/Pydrive/client_secrets.json"
+        owner: "{{ system_user }}"  # Specify appropriate owner
+        group: "{{ group_gid }}"    # Specify appropriate group
+        mode: '0644'
+
+    - name: Upload the backup to Google Drive
+      ansible.builtin.command: /usr/local/bin/python3.8 {{ compose_project_dir }}/Pydrive/backup.py
+      changed_when: false

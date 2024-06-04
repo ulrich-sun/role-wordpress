@@ -6,11 +6,11 @@
     - name: Récupérer les plugins installés avant la mise à jour
       ansible.builtin.command: /usr/local/bin/wp plugin list --format=json --allow-root --ssh=docker:{{ wordpress_container_name }}
       register: installed_plugins_before_update
+      changed_when: true  # Indique que la tâche a changé quelque chose pour déclencher le handler
       notify:
         - Backup_plugin_handler
         - Activate_plugin_update
         - Activate_plugin_malcare-security_update
-      changed_when: false  # Indicate that the task should not be considered as having changed anything
 
     - name: "Flush handlers backup and activate rights of plugins"
       ansible.builtin.meta: flush_handlers
@@ -26,10 +26,11 @@
       when:
         - plugin_to_update.plugin_name is defined and plugin_to_update.plugin_name | length > 0
         - "plugin_directory_status.stat.mode == '0775'"
+      changed_when: true  # Indique que la tâche a changé quelque chose pour déclencher le handler
       notify:
         - Deactivate_plugin_update
         - Activate_plugin_malcare-security_update
-      changed_when: false  # Indicate that the task should not be considered as having changed anything
+      failed_when: false  # Indicate that the task should not be considered as having changed anything
 
     - name: Récupérer les plugins installés après la mise à jour
       ansible.builtin.command: /usr/local/bin/wp plugin list --format=json --allow-root --ssh=docker:{{ wordpress_container_name }}

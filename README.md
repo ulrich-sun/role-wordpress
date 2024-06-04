@@ -617,7 +617,7 @@ b. Restore specific theme from s3 bucket
 
 - molecule integration
 - Pre-commit hooks integration
-  
+
 Pre-commit hooks are an effective way to automate code verification processes and ensure the quality, security, and consistency of a software project's source code.
 
 Here are some common security testing hooks you can use in a pre-commit pipeline:
@@ -654,7 +654,7 @@ These hooks can be used to detect potential security issues in the source code a
     Before you can run hooks, you need to have the pre-commit package manager installed.
 
 	Using pip:
-	
+
 	`pip3 install pre-commit`
 
 	`pre-commit --version` should show you what version you're using
