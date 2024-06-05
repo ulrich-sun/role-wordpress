@@ -44,6 +44,14 @@ for upload_file in upload_file_list:
     gfile.SetContentFile(upload_file['path'])
 
     # Upload the file to Google Drive
-    gfile.Upload()
+    #gfile.Upload()
     # Optional: print out the title and ID of the uploaded file (uncomment to use)
     # print('title: %s, id: %s' % (gfile['title'], gfile['id']))
+
+try:
+    gfile.Upload()
+    logging.info("File uploaded successfully.")
+except httplib2.RedirectMissingLocation as e:
+    logging.error("RedirectMissingLocation error: %s", e)
+except Exception as e:
+    logging.error("An unexpected error occurred: %s", e)
