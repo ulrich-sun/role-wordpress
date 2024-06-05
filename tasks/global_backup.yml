@@ -25,7 +25,7 @@
       #  - Global_backup_db
 
     - name: Backup entire WordPress site without backup_file_name
-      ansible.builtin.command: sh -c "cd {{ wordpress_site }} && tar -czvf {{ compose_project_dir }}/global_backup_site/{{ wp_frontend }} . --exclude='uploads/*'"
+      ansible.builtin.command: sh -c "cd {{ wordpress_site }} && tar --exclude='./uploads' -czvf {{ compose_project_dir }}/global_backup_site/{{ wp_frontend }} . "
       #args:
       #  creates: "{{ compose_project_dir }}/global_backup_site/{{ wp_frontend }}"
       #notify:
