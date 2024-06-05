@@ -1,7 +1,5 @@
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
-import httplib2
-import logging
 
 # Initialize Google authentication and create the Google Drive instance
 gauth = GoogleAuth()
@@ -46,10 +44,6 @@ for upload_file in upload_file_list:
     gfile.SetContentFile(upload_file['path'])
 
     # Upload the file to Google Drive
-    #gfile.Upload()
+    gfile.Upload()
     # Optional: print out the title and ID of the uploaded file (uncomment to use)
     # print('title: %s, id: %s' % (gfile['title'], gfile['id']))
-
-    # Specify chunk size (e.g., 5 MB)
-    gfile.Upload(param={'chunksize': 5 * 1024 * 1024})
-    logging.info("File uploaded successfully.")
