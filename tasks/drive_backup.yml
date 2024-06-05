@@ -63,4 +63,6 @@
       
     - name: Upload the backup to Google Drive
       ansible.builtin.command: /usr/local/bin/python3.8 "{{ compose_project_dir }}/Pydrive/backup.py"
+      environment:
+        GOOGLE_APPLICATION_CREDENTIALS: "{{ credentials_path }}"
       changed_when: false
