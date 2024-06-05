@@ -45,8 +45,8 @@
       
     - name: Archive and remove .sql file with tar
       ansible.builtin.command: >
-        tar -czvf "{{ compose_project_dir }}/{{ backup_db_dir }}/{{ wordpress_tar }}" "{{ compose_project_dir }}/{{ backup_db_dir }}/{{ wordpress }}" && 
-        rm "{{ compose_project_dir }}/{{ backup_db_dir }}/{{ wordpress }}"
+        tar -czvf "{{ compose_project_dir }}/{{ backup_db_dir }}/{{ wordpress_tar }}" "{{ compose_project_dir }}/{{ backup_db_dir }}/{{ wordpress }}"
+      ansible.builtin.command: rm "{{ compose_project_dir }}/{{ backup_db_dir }}/{{ wordpress }}"
       notify:
         - Drive_backup_handler
 
