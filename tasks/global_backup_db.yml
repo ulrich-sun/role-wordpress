@@ -37,15 +37,11 @@
 
     - name: Copy file db of drive from container to host
       ansible.builtin.command: docker cp "{{ db_container_name }}:{{ wp_dir }}/{{ wordpress }}" "{{ compose_project_dir }}/{{ backup_db_dir }}"
-      args:
-        creates: "{{ compose_project_dir }}/{{ backup_db_dir }}/{{ wordpress }}"
+      #args:
+      #  creates: "{{ compose_project_dir }}/{{ backup_db_dir }}/{{ wordpress }}"
       notify:
         - Drive_backup_handler
-      failed_when: false
-
-    - name: ls files
-      ansible.builtin.command: ls -la "{{ compose_project_dir }}/{{ backup_db_dir }}/{{ wordpress }}"
-      changed_when: false
+      #failed_when: false
 
     - name: Remove file from mysql container
       ansible.builtin.command: docker exec {{ db_container_name }} sh -c 'rm -rf {{ wp_dir }}/*.sql'
