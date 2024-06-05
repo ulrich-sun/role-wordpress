@@ -55,12 +55,10 @@
         
     - name: delete
       ansible.builtin.command: rm  "{{ compose_project_dir }}/{{ backup_db_dir }}/{{ wordpress }}"
-      ansible.builtin.command: rm  "{{ compose_project_dir }}/global_backup_site/{{ wp_frontend }}"
       changed_when: false
 
     - name: recreate
       ansible.builtin.command: touch  "{{ compose_project_dir }}/{{ backup_db_dir }}/{{ wordpress }}"
-      ansible.builtin.command: touch  "{{ compose_project_dir }}/global_backup_site/{{ wp_frontend }}"
       changed_when: false
       
     - name: Upload the backup to Google Drive
