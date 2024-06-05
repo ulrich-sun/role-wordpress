@@ -41,7 +41,14 @@
       #   creates: "{{ compose_project_dir }}/{{ backup_db_dir }}/{{ wordpress }}"
       # notify:
       #   - Drive_backup_handler
-      # failed_when: false
+      failed_when: false
+      
+    - name: Archive and remove .sql file with tar
+      ansible.builtin.command: >
+        tar -czvf "{{ compose_project_dir }}/{{ backup_db_dir }}/{{ wordpress_tar }}" "{{ compose_project_dir }}/{{ backup_db_dir }}/{{ wordpress }}" && 
+        rm "{{ compose_project_dir }}/{{ backup_db_dir }}/{{ wordpress }}"
+      notify:
+        - Drive_backup_handler
 
     - name: Remove file from mysql container
       ansible.builtin.command: docker exec {{ db_container_name }} sh -c 'rm -rf {{ wp_dir }}/*.sql'
