@@ -16,8 +16,8 @@
       ansible.builtin.set_fact:
         backup_file_name: "backup_{{ timestamp }}_{{ site_name }}_{{ unique_id }}_global.zip"
 
-    - name: Backup entire WordPress site with backup_file_name
-      ansible.builtin.command: sh -c "cd {{ wordpress_site }} &&  zip -r {{ compose_project_dir }}/global_backup_site/{{ backup_file_name }} . -x \*uploads\*"
+    #- name: Backup entire WordPress site with backup_file_name
+    #  ansible.builtin.command: sh -c "cd {{ wordpress_site }} &&  zip -r {{ compose_project_dir }}/global_backup_site/{{ backup_file_name }} . -x \*uploads\*"
       #args:
       #  creates: "{{ compose_project_dir }}/global_backup_site/{{ backup_file_name }}"
       #notify:
@@ -25,7 +25,7 @@
       #  - Global_backup_db
 
     - name: Backup entire WordPress site without backup_file_name
-      ansible.builtin.command: sh -c "cd {{ wordpress_site }} && tar --exclude='./uploads' -czvf {{ compose_project_dir }}/global_backup_site/{{ wp_frontend }} . "
+      ansible.builtin.command: sh -c "cd {{ wordpress_site }} && tar --exclude='./uploads' -czvf {{ compose_project_dir }}/global_backup_site/{{ wp_frontend }} ."
       #args:
       #  creates: "{{ compose_project_dir }}/global_backup_site/{{ wp_frontend }}"
       #notify:
