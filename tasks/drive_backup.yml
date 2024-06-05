@@ -53,13 +53,13 @@
         group: "{{ group_gid }}"    # Specify appropriate group
         mode: '0644'
         
-    - name: delete
-      ansible.builtin.command: rm  "{{ compose_project_dir }}/{{ backup_db_dir }}/{{ wordpress }}"
-      changed_when: false
+    # - name: delete
+    #   ansible.builtin.command: rm  "{{ compose_project_dir }}/{{ backup_db_dir }}/{{ wordpress }}"
+    #   changed_when: false
 
-    - name: recreate
-      ansible.builtin.command: touch  "{{ compose_project_dir }}/{{ backup_db_dir }}/{{ wordpress }}"
-      changed_when: false
+    # - name: recreate
+    #   ansible.builtin.command: touch  "{{ compose_project_dir }}/{{ backup_db_dir }}/{{ wordpress }}"
+    #   changed_when: false
       
     - name: Upload the backup to Google Drive
       ansible.builtin.command: /usr/local/bin/python3.8 "{{ compose_project_dir }}/Pydrive/backup.py"
