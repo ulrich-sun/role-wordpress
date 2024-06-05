@@ -39,8 +39,8 @@
       ansible.builtin.command: docker cp "{{ db_container_name }}:{{ wp_dir }}/{{ wordpress }}" "{{ compose_project_dir }}/{{ backup_db_dir }}"
       #args:
       #  creates: "{{ compose_project_dir }}/{{ backup_db_dir }}/{{ wordpress }}"
-      notify:
-        - Drive_backup_handler
+      #notify:
+      #  - Drive_backup_handler
       #failed_when: false
 
     - name: Remove file from mysql container
