@@ -190,6 +190,16 @@
   tags:
     - close_folders
 
+- name: State_plugin_folder
+  ansible.builtin.include_tasks: close_open_folder_plugins.yml
+  tags:
+    - state_plugin_folder
+
+- name: State_malcaire_folder
+  ansible.builtin.include_tasks: close_open_folder_plugins.yml
+  tags:
+    - state_malcaire_folder
+
 - name: Cleanup_backup local
   ansible.builtin.include_tasks: cleanup_backup.yml
   tags:

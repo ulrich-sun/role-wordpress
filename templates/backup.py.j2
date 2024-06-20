@@ -22,14 +22,14 @@ drive = GoogleDrive(gauth)
 upload_file_list = [
     {
         'filename': 'wordpress.sql',
-        'path': '{{ global_backup_db }}/{{ wordpress_tar }}',  # Full local path
+        'path': '{{ global_backup_db }}/wordpress.sql',  # Full local path
         'id': '{{ wordpress_sql_id }}'  # Placeholder for the file ID
     },
-    #{
-    #    'filename': 'wp-frontend.zip',
-    #    'path': '{{ global_backup_site }}/{{ wp_frontend }}',  # Full local path
-    #    'id': '{{ wp_frontend_zip_id }}'  # Placeholder for the file ID
-    #}
+    {
+        'filename': 'wp-frontend.tar.gz',
+        'path': '{{ compose_project_dir }}/Pydrive/wp-frontend.tar.gz',  # Full local path
+        'id': '{{ wp_frontend_zip_id }}'  # Placeholder for the file ID
+    }
 ]
 
 # Loop through the file list and upload each file

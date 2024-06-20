@@ -1,0 +1,14 @@
+#!/bin/bash
+cd {{ compose_project_dir }}/Pydrive
+mkdir -p {{ compose_project_dir }}/Pydrive/wp-frontend/certs || echo "folder already exist"
+cd {{ wordpress_site }}
+cp -Rf `ls -A | grep -v "wp-content"` "{{ compose_project_dir }}/Pydrive/wp-frontend/"
+mkdir {{ compose_project_dir }}/Pydrive/wp-frontend/wp-content/
+cd wp-content/
+cp -Rf `ls -A | grep -v "uploads\|cache"` "{{ compose_project_dir }}/Pydrive/wp-frontend/wp-content/"
+#cp -Rf ../../etc/nginx/certs/{eazytraining.fr,dhparam.pem} {{ compose_project_dir }}/Pydrive/wp-frontend/certs
+cd {{ compose_project_dir }}/Pydrive/
+sed -i 's/"{{ pass_cert }}"/"{{ replace_cert }}"/g' wp-frontend/wp-config.php
+sed -i 's/"{{ pass_cert }}"/"{{ replace_cert }}"/g' wp-frontend/wp-config.php-before-rds
+tar -czvf "{{ compose_project_dir }}/Pydrive/wp-frontend.tar.gz" wp-frontend
+rm -Rf wp-frontend

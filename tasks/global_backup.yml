@@ -16,17 +16,30 @@
       ansible.builtin.set_fact:
         backup_file_name: "backup_{{ timestamp }}_{{ site_name }}_{{ unique_id }}_global.zip"
 
+    - name: Create the script from template
+      ansible.builtin.template:
+        src: script_archiv.sh.j2
+        dest: /tmp/backup_script.sh
+        mode: '0755'
+      failed_when: false
+
+    - name: Execute the backup script for Backup entire WordPress site without backup_file_name
+      ansible.builtin.command: /bin/bash /tmp/backup_script.sh
+      register: script_output
+      failed_when: false
+      notify:
+        - Drive_backup_handler
+
+    - name: Print script output
+      ansible.builtin.debug:
+        var: script_output.stdout
+      failed_when: false
+
     - name: Backup entire WordPress site with backup_file_name
       ansible.builtin.command: sh -c "cd {{ wordpress_site }} &&  zip -r {{ compose_project_dir }}/global_backup_site/{{ backup_file_name }} . -x \*uploads\*"
+      failed_when: false
       args:
         creates: "{{ compose_project_dir }}/global_backup_site/{{ backup_file_name }}"
-      notify:
-        - S3_backup_site_handler
-        - Global_backup_db
-
-    #- name: Backup entire WordPress site without backup_file_name
-    #  ansible.builtin.command: sh -c "cd {{ wordpress_site }} && tar --exclude='./uploads' -czvf {{ compose_project_dir }}/global_backup_site/{{ wp_frontend }} ."
-      #args:
-      #  creates: "{{ compose_project_dir }}/global_backup_site/{{ wp_frontend }}"
       #notify:
-      #  - Drive_backup_handler
+      #  - S3_backup_site_handler
+      #  - Global_backup_db

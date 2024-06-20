@@ -21,3 +21,39 @@
     - {path: "{{ wordpress_site }}/wp-content/plugins/malcare-security", mode: "777"}
   tags:
     - close_folders
+
+- block:
+    - name: Vérifier l'état du dossier plugins
+      ansible.builtin.stat:
+        path: "{{ wordpress_site }}/wp-content/plugins"
+      register: plugins_stat
+
+    - name: Afficher l'état du dossier plugins
+      ansible.builtin.debug:
+        msg: >
+          Le dossier plugins est 
+          {% if plugins_stat.stat.mode == '0775' %}
+          ouvert
+          {% else %}
+          fermé
+          {% endif %}
+  tags:
+    - state_plugin_folder
+
+- block:
+    - name: Vérifier l'état du dossier malcare-security
+      ansible.builtin.stat:
+        path: "{{ wordpress_site }}/wp-content/plugins/malcare-security"
+      register: malcare_stat
+
+    - name: Afficher l'état du dossier malcare-security
+      ansible.builtin.debug:
+        msg: >
+          Le dossier malcare-security est 
+          {% if malcare_stat.stat.mode == '0777' %}
+          ouvert
+          {% else %}
+          fermé
+          {% endif %}
+  tags:
+    - state_malcaire_folder

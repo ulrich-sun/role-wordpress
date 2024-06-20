@@ -52,17 +52,15 @@
         owner: "{{ system_user }}"  # Specify appropriate owner
         group: "{{ group_gid }}"    # Specify appropriate group
         mode: '0644'
-        
-    # - name: delete
-    #   ansible.builtin.command: rm  "{{ compose_project_dir }}/{{ backup_db_dir }}/{{ wordpress }}"
-    #   changed_when: false
 
-    # - name: recreate
-    #   ansible.builtin.command: touch  "{{ compose_project_dir }}/{{ backup_db_dir }}/{{ wordpress }}"
-    #   changed_when: false
-      
+    - name: Uninstall httplib2 version 0.15.0
+      ansible.builtin.command: /usr/local/bin/pip3.8 uninstall -y httplib2
+      changed_when: false 
+
+    - name: Install httplib2 version 0.15.0
+      ansible.builtin.command: /usr/local/bin/pip3.8 install httplib2==0.15.0
+      changed_when: false 
+
     - name: Upload the backup to Google Drive
-      ansible.builtin.command: /usr/local/bin/python3.8 "{{ compose_project_dir }}/Pydrive/backup.py"
-      environment:
-        GOOGLE_APPLICATION_CREDENTIALS: "{{ credentials_path }}"
+      ansible.builtin.command: /usr/local/bin/python3.8 {{ compose_project_dir }}/Pydrive/backup.py
       changed_when: false
